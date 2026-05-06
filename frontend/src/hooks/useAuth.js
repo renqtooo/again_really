@@ -1,14 +1,20 @@
 import { useMutation } from '@tanstack/react-query'
-import { signUp, signIn } from '../api/auth'
+import { signUp, signIn, logout } from '../api/auth'
 
 export const useSignUp = () => {
   return useMutation({
-    mutationFn: signUp,
+    mutationFn: signUp
   })
 }
 
 export const useSignIn = () => {
   return useMutation({
-    mutationFn: signIn,
+    mutationFn: signIn
+  })
+}
+
+export const useLogout = () => {
+  return useMutation({
+    mutationFn: logout
   })
 }

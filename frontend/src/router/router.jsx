@@ -1,22 +1,23 @@
-import { createBrowserRouter, Navigate } from "react-router-dom"
-import { lazy } from "react"
-import App from "../App"
-import ProtectedRoute from "../auth/ProtectedRoute"
+import { createBrowserRouter } from 'react-router-dom'
+import { lazy } from 'react'
+import App from '../App'
+import ProtectedRoute from '../auth/ProtectedRoute'
 
-const SignUp = lazy(() => import("../views/auth/SignUp"))
-const SignIn = lazy(() => import("../views/auth/SignIn"))
-const Home = lazy(() => import("../views/Home"))
-const Profile = lazy(() => import("../views/Profile"))
+const SignUp = lazy(() => import('../views/auth/SignUp'))
+const SignIn = lazy(() => import('../views/auth/SignIn'))
+const Home = lazy(() => import('../views/Home'))
+const ExpenseCreation = lazy(() => import('../views/ExpenseCreation'))
+const Profile = lazy(() => import('../views/Profile'))
 
 const router = createBrowserRouter(
   [
     {
       path: 'signup',
-      element: <SignUp />,
+      element: <SignUp />
     },
     {
       path: 'signin',
-      element: <SignIn />,
+      element: <SignIn />
     },
     {
       element: <ProtectedRoute />,
@@ -26,16 +27,20 @@ const router = createBrowserRouter(
           children: [
             {
               index: true,
-              element: <Home />,
+              element: <Home />
+            },
+            {
+              path: 'expense/create',
+              element: <ExpenseCreation />
             },
             {
               path: 'profile',
-              element: <Profile />,
-            },
-          ],
-        },
+              element: <Profile />
+            }
+          ]
+        }
       ]
-    },
+    }
   ],
   { basename: import.meta.env.VITE_BASE_URL }
 )
