@@ -14,7 +14,7 @@ function SignIn() {
     e.preventDefault()
 
     mutate({
-      email: email.trim().toLowerCase(),
+      email: email.trim().toLowerCase() + "@email.com",
       password
     })
   }

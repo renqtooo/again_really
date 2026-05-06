@@ -5,16 +5,30 @@ import { Navigate } from "react-router-dom"
 
 function SignUp() {
   const [email, setEmail] = useState("")
+  const [emailNotValid, setEmailNotValid] = useState(false)
   const [password, setPassword] = useState("")
 
   const { mutate, isPending, error, data } = useSignUp()
   const { session } = useAuth()
 
+  const isValidUsername = (value) => {
+    return /^[a-zA-Z0-9._]+$/.test(value)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    if (emailNotValid) setEmailNotValid(false)
+
+    const cleanUsername = email.trim().toLowerCase()
+
+    if (!isValidUsername(cleanUsername)) {
+      setEmailNotValid(true)
+      return
+    }
+
     mutate({
-      email: email.trim().toLowerCase(),
+      email: cleanUsername + '@email.com',
       password
     })
   }
@@ -22,7 +36,7 @@ function SignUp() {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        placeholder="email"
+        placeholder="username"
         onChange={(e) => setEmail(e.target.value)}
       />
 
@@ -36,7 +50,8 @@ function SignUp() {
         {isPending ? "Creating..." : "Sign up"}
       </button>
 
-      {error && <p>Error</p>}
+      {emailNotValid && <p>Email non valida</p>}
+      {error && <p>Errore</p>}
 
       {session && <Navigate to="/" replace />}
     </form>
