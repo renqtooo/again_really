@@ -3,9 +3,10 @@ import { lazy } from "react"
 import App from "../App"
 import ProtectedRoute from "../auth/ProtectedRoute"
 
-const Home = lazy(() => import("../views/Home"))
 const SignUp = lazy(() => import("../views/auth/SignUp"))
 const SignIn = lazy(() => import("../views/auth/SignIn"))
+const Home = lazy(() => import("../views/Home"))
+const Profile = lazy(() => import("../views/Profile"))
 
 const router = createBrowserRouter(
   [
@@ -26,6 +27,10 @@ const router = createBrowserRouter(
             {
               index: true,
               element: <Home />,
+            },
+            {
+              path: 'profile',
+              element: <Profile />,
             },
           ],
         },

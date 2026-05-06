@@ -1,7 +1,9 @@
+import { Button, Group, TextInput } from "@mantine/core"
+
 function Home() {
   return (
     <>
-      zdaai
+      Home
     </>
   )
 }

@@ -1,16 +1,16 @@
 import { Suspense } from "react";
 import { Outlet, Link } from "react-router-dom";
+import AppBar from "./components/AppBar"
+import Loading from "./components/Loading"
 
 function App() {
   return (
     <>
-      <nav>
-        <Link to="/">Home</Link>
-      </nav>
+      <AppBar />
 
       <main>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Outlet />a
+        <Suspense fallback={<Loading />}>
+          <Outlet />
         </Suspense>
       </main>
     </>
