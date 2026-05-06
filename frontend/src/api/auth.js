@@ -1,0 +1,24 @@
+import { supabase } from "../lib/supabase";
+
+export const signUp = async ({ email, password }) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: import.meta.env.VITE_BASE_URL
+    }
+  })
+
+  if (error) throw error
+  return data
+}
+
+export const signIn = async ({ email, password }) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  })
+
+  if (error) throw error
+  return data
+}
