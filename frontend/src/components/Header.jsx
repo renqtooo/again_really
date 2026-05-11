@@ -5,7 +5,6 @@ export default function Header({ title = '' }) {
   const { colorScheme } = useMantineColorScheme()
   const bg = colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0]
 
-  console.log(theme)
   return (
     <div style={{ position: 'sticky', top: '0', width: '100%', zIndex: 100, background: bg }}>
       <Title pl='xl' pt='sm'>

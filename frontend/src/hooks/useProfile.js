@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthProvider'
-import { getProfile } from '../api/profile'
+import { getProfile, updateSalary } from '../api/profile'
 
 export const useProfile = () => {
   const { session } = useAuth()
@@ -9,5 +9,14 @@ export const useProfile = () => {
     queryKey: ['profile'],
     queryFn: () => getProfile(session),
     enabled: !!session
+  })
+}
+
+export const useUpdateSalary = () => {
+  const { session } = useAuth()
+
+  return useMutation({
+    mutationFn: (salary) =>
+      updateSalary(salary, session.user.id)
   })
 }

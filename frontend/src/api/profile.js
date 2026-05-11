@@ -9,3 +9,14 @@ export const getProfile = async (session) => {
   data.username = session.user.email.split('@')[0]
   return data
 }
+
+export const updateSalary = async (salary, id_user) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({ salary })
+    .eq('id_profile', id_user)
+    .select()
+
+  if (error) throw error
+  return data
+}

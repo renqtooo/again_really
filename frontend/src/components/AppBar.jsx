@@ -34,7 +34,7 @@ export default function AppBar() {
             <Icon
               key={i}
               size={50}
-              stroke={active ? 1.5 : 1}
+              stroke={active ? 2 : 1.5}
               color={active ? 'orange' : 'gray'}
               onClick={() => navigate(tab.path)}
             />

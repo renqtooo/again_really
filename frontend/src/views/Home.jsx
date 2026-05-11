@@ -1,4 +1,4 @@
-import { Button, Container, Flex } from '@mantine/core'
+import { Button, Container, Flex, Title } from '@mantine/core'
 import Header from '../components/Header'
 import { IconBasketDollar } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
@@ -8,9 +8,11 @@ function Home() {
 
   return (
     <>
-      <Header title={'Home'} />
+      <Header title={'Again? Really?'} />
 
       <Container style={{ height: '90dvh' }}>
+        
+
         <Flex justify='center' align='center' direction='column'>
           <Button
             onClick={() => navigate('/expense/create')}

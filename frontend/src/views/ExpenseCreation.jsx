@@ -1,16 +1,20 @@
-import { Button, Card, Center, Checkbox, Container, Flex, Group, NumberInput, Text } from '@mantine/core'
+import { Button, Card, Center, Checkbox, Container, Flex, Group, NumberInput, Text, Textarea } from '@mantine/core'
 import Header from '../components/Header'
 import { useCategory } from '../hooks/useCategory'
 import { useReason } from '../hooks/useReason'
 import Loading from '../components/Loading'
-import { IconBottleFilled, IconCoffee, IconMoodAngry, IconPlus, IconSmoking } from '@tabler/icons-react'
-import { useState } from 'react'
+import { IconBottleFilled, IconCheck, IconCoffee, IconMoodAngry, IconPlus, IconSmoking } from '@tabler/icons-react'
+import { useEffect, useState } from 'react'
+import FloatingButton from "../components/FloatingButton"
+import { useCreateExpense } from '../hooks/useExpense'
+import AlertToast from '../components/AlertToast'
 
 export default function ExpenseCreation() {
   const { data: categories, isLoading: isCategoriesLoading } = useCategory()
   const { data: reasons, isLoading: isReasonsLoading } = useReason()
+  const { mutate: mutateCreateExpense, isLoading: isCreateLoading, isError: isCreateError, data: expense } = useCreateExpense()
 
-  const isLoading = isCategoriesLoading || isReasonsLoading
+  const isPageLoading = isCategoriesLoading || isReasonsLoading
 
   const iconMap = {
     IconCoffee,
@@ -21,7 +25,19 @@ export default function ExpenseCreation() {
 
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedReason, setSelectedReason] = useState(null)
+  const [selectedDecisionTime, setSelectedDecisionTime] = useState(null)
+  const [selectedRegretLevel, setSelectedRegretLevel] = useState(null)
   const [price, setPrice] = useState(0)
+  const [description, setDescription] = useState('')
+  const [isOnline, setIsOnline] = useState(false)
+  const [isInCompany, setIsInCompany] = useState(false)
+
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true)
+  const [alertToast, setAlertToast] = useState({title: '', message: '', color: 'error', isVisible: false, timeout: 3000})
+
+  const showAlert = (isVisible=false, color='error', title='', message='', timeout=3000) => {
+    setAlertToast({title, message, color, isVisible, timeout})
+  }
 
   const selectCategory = (category) => {
     if (selectedCategory?.id === category.id_category) {
@@ -41,13 +57,70 @@ export default function ExpenseCreation() {
     setSelectedReason({ id: reason.id_reason })
   }
 
+  const selectDecisionTime = (decision) => {
+    if (selectedDecisionTime === decision) {
+      setSelectedDecisionTime(null)
+      return
+    }
+    setSelectedDecisionTime(decision)
+  }
+
+  const selectRegretLevel = (regret) => {
+    if (selectedRegretLevel === regret) {
+      setSelectedRegretLevel(null)
+      return
+    }
+    setSelectedRegretLevel(regret)
+  }
+
+  const createExpense = () => {
+    const payload = {
+      id_category: selectedCategory.id,
+      amount: price,
+      description: description.trim() ? description : null,
+      id_reason: selectedReason?.id ?? null,
+      is_in_company: isInCompany,
+      regret_level: selectedRegretLevel ?? null,
+      is_online: isOnline,
+      decision_time_level: selectedDecisionTime ?? null
+    }
+
+    mutateCreateExpense(payload)
+  }
+
+  const resetData = () => {
+    setSelectedCategory(null)
+    setSelectedReason(null)
+    setPrice(0)
+    setSelectedDecisionTime(null)
+    setSelectedRegretLevel(null)
+    setDescription('')
+    setIsOnline(false)
+    setIsInCompany(false)
+  }
+
+  useEffect(() => {
+    if (expense) {
+      showAlert(true, 'success', "Spesa creata!", "", 1500)
+      resetData()
+    }
+  }, [expense])
+
+  useEffect(() => {
+    if (isCreateError) showAlert(true, 'error', "Si è verificato un errore!")
+  }, [isCreateError])
+
+
+  useEffect(() => {
+    setIsBtnDisabled(!(selectedCategory && price > 0))
+  }, [selectedCategory, price])
+
   return (
     <>
       <Header title={'Nuova Spesa'} />
+      {isPageLoading && <Loading />}
 
-      {isLoading && <Loading />}
-
-      {!isLoading && (
+      {!isPageLoading && (
         <Container style={{ height: '100dvh' }}>
           <Flex justify='center' align='center' direction='column' gap='lg'>
             <Card w='100%'>
@@ -103,8 +176,21 @@ export default function ExpenseCreation() {
             </Card>
 
             <Group justify='space-around' w='100%'>
-              <Checkbox label='Online' />
-              <Checkbox label='In compagnia' />
+              <Checkbox
+                size="md"
+                color="accent"
+                checked={isOnline}
+                onChange={(event) => setIsOnline(event.currentTarget.checked)}
+                label='Online'
+              />
+
+              <Checkbox
+                size="md"
+                color="accent"
+                checked={isInCompany}
+                onChange={(event) => setIsInCompany(event.currentTarget.checked)}
+                label='In compagnia'
+              />
             </Group>
 
             <Card w='100%'>
@@ -137,21 +223,76 @@ export default function ExpenseCreation() {
             <Card w='100%'>
               <Text size='xl' mb='lg' fw={700}>
                 Quanto ci hai pensato?
-                <Text size='sm' c='dimmed'>
+                <Text span style={{display: 'block'}} size='sm' c='dimmed'>
                   (1 istantaneo - 5 troppo)
                 </Text>
               </Text>
               <Group justify='center'>
-                <Button color='error'>1</Button>
-                <Button>2</Button>
-                <Button color='yellow'>3</Button>
-                <Button color='green'>4</Button>
-                <Button color='accent'>5</Button>
+                {['error', 'primary', 'yellow', 'green', 'accent'].map((d, i) => (
+                  <Button
+                    color={d}
+                    variant={
+                      !selectedDecisionTime ? ''
+                      : selectedDecisionTime === i+1 ? 'filled' : 'outline'
+                    }
+                    key={i}
+                    onClick={() => selectDecisionTime(i+1)}
+                  >{i+1}</Button>
+                ))}
               </Group>
             </Card>
+
+            <Card w='100%'>
+              <Text size='xl' mb='lg' fw={700}>
+                Quanto ti sei pentito?
+                <Text span style={{display: 'block'}} size='sm' c='dimmed'>
+                  (0 per niente - 3 troppo)
+                </Text>
+              </Text>
+              <Group justify='center'>
+                {['green', 'yellow', 'primary', 'error'].map((d, i) => (
+                  <Button
+                    color={d}
+                    variant={
+                      !selectedRegretLevel ? ''
+                      : selectedRegretLevel === i+1 ? 'filled' : 'outline'
+                    }
+                    key={i}
+                    onClick={() => selectRegretLevel(i+1)}
+                  >{i+1}</Button>
+                ))}
+              </Group>
+            </Card>
+
+            <Card w="100%">
+              <Text size='xl' mb='xs' fw={700}>
+                Descrizione
+              </Text>
+              <Textarea
+                value={description}
+                onChange={(event) => setDescription(event.currentTarget.value)}
+                autosize
+                minRows={2}
+                maxRows={4}
+                placeholder="Dettagli..."
+              />
+            </Card>
           </Flex>
+
+          <div style={{paddingBottom: '22vh'}}></div>
         </Container>
       )}
+
+      <AlertToast
+        title={alertToast.title}
+        message={alertToast.message}
+        color={alertToast.color}
+        visible={alertToast.isVisible}
+        timeout={alertToast.timeout}
+        onClose={() => setAlertToast((alertToast) => alertToast.isVisible = false)}
+      />
+
+      <FloatingButton onClick={createExpense} text="CREA" icon={<IconCheck size={25} />} loading={isCreateLoading} disabled={isBtnDisabled} />
     </>
   )
 }
