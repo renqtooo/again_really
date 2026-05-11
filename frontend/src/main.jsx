@@ -7,8 +7,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import router from './router/router'
 import { createTheme, MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css'
+import { registerSW } from 'virtual:pwa-register'
 
 const queryClient = new QueryClient()
+
+registerSW({ immediate: true })
 
 const theme = createTheme({
   colors: {
