@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import FloatingButton from '../components/FloatingButton'
 import { useCreateExpense } from '../hooks/useExpense'
 import AlertToast from '../components/AlertToast'
+import { iconMap } from '../composables/category'
 
 export default function ExpenseCreation() {
   const { data: categories, isLoading: isCategoriesLoading } = useCategory()
@@ -20,13 +21,6 @@ export default function ExpenseCreation() {
   } = useCreateExpense()
 
   const isPageLoading = isCategoriesLoading || isReasonsLoading
-
-  const iconMap = {
-    IconCoffee,
-    IconSmoking,
-    IconBottleFilled,
-    IconMoodAngry
-  }
 
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedReason, setSelectedReason] = useState(null)

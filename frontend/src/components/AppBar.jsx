@@ -1,9 +1,10 @@
 import { Paper, Group } from '@mantine/core'
-import { IconHome, IconUser } from '@tabler/icons-react'
+import { IconEdit, IconHome, IconUser } from '@tabler/icons-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const tabs = [
   { icon: IconHome, path: '/' },
+  { icon: IconEdit, path: '/customize' },
   { icon: IconUser, path: '/profile' }
 ]
 

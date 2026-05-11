@@ -1,11 +1,4 @@
-import {
-  Button,
-  Group,
-  Modal,
-  NumberInput,
-  Stack,
-  Text,
-} from '@mantine/core'
+import { Button, Group, Modal, NumberInput, Stack, Text } from '@mantine/core'
 import { useEffect, useRef } from 'react'
 
 export default function ConfirmDialog({
@@ -21,9 +14,8 @@ export default function ConfirmDialog({
   input,
   value,
   min,
-  onChange,
+  onChange
 }) {
-
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -35,42 +27,20 @@ export default function ConfirmDialog({
   }, [opened])
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={title}
-      centered
-      radius="lg"
-    >
+    <Modal opened={opened} onClose={onClose} title={title} centered radius='lg'>
       <Stack>
-        <Text c="dimmed">
-          {message}
-        </Text>
+        <Text c='dimmed'>{message}</Text>
 
         {input && (
-          <NumberInput
-            ref={inputRef}
-            size='xl'
-            value={value}
-            onChange={onChange}
-            min={min}
-            clampBehavior='strict'
-          />
+          <NumberInput ref={inputRef} size='xl' value={value} onChange={onChange} min={min} clampBehavior='strict' />
         )}
 
-        <Group justify="flex-end" mt="md">
-          <Button
-            variant="default"
-            onClick={onClose}
-          >
+        <Group justify='flex-end' mt='md'>
+          <Button variant='default' onClick={onClose}>
             {cancelText}
           </Button>
 
-          <Button
-            color={color}
-            loading={loading}
-            onClick={onConfirm}
-          >
+          <Button color={color} loading={loading} onClick={onConfirm}>
             {confirmText}
           </Button>
         </Group>

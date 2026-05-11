@@ -8,6 +8,7 @@ const SignIn = lazy(() => import('../views/auth/SignIn'))
 const Home = lazy(() => import('../views/Home'))
 const ExpenseCreation = lazy(() => import('../views/ExpenseCreation'))
 const Profile = lazy(() => import('../views/Profile'))
+const Customize = lazy(() => import('../views/Customize'))
 
 const router = createHashRouter(
   [
@@ -36,12 +37,16 @@ const router = createHashRouter(
             {
               path: 'profile',
               element: <Profile />
+            },
+            {
+              path: 'customize',
+              element: <Customize />
             }
           ]
         }
       ]
     }
-  ],
+  ]
   // { basename: import.meta.env.VITE_BASE_URL }
 )
 
