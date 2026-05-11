@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createHashRouter } from 'react-router-dom'
 import { lazy } from 'react'
 import App from '../App'
 import ProtectedRoute from '../auth/ProtectedRoute'
@@ -9,7 +9,7 @@ const Home = lazy(() => import('../views/Home'))
 const ExpenseCreation = lazy(() => import('../views/ExpenseCreation'))
 const Profile = lazy(() => import('../views/Profile'))
 
-const router = createBrowserRouter(
+const router = createHashRouter(
   [
     {
       path: 'signup',
@@ -42,7 +42,7 @@ const router = createBrowserRouter(
       ]
     }
   ],
-  { basename: import.meta.env.VITE_BASE_URL }
+  // { basename: import.meta.env.VITE_BASE_URL }
 )
 
 export default router
