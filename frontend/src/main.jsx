@@ -22,7 +22,7 @@ const theme = createTheme({
       '#fbc5a8',
       '#f8a97a',
       '#f28c4c',
-      '#db6e2f',
+      '#c16340', //
       '#b85724',
       '#94461e',
       '#7a3a1a'
@@ -35,7 +35,7 @@ const theme = createTheme({
       '#fadb5f',
       '#f7c948',
       '#d9a514',
-      '#b8890f',
+      '#ccaa2e', //
       '#8d6e0a',
       '#6d5508',
       '#504006'
@@ -48,7 +48,7 @@ const theme = createTheme({
       '#c4b5fd',
       '#a78bfa',
       '#7c3aed',
-      '#8b5cf6',
+      '#6f51b7', //
       '#6d28d9',
       '#5b21b6',
       '#4c1d95'
@@ -61,7 +61,7 @@ const theme = createTheme({
       '#9bd5a6',
       '#6fba82',
       '#4f9f67',
-      '#3b8554',
+      '#4e8536', //
       '#2f6e46',
       '#27593a',
       '#1f4530'
@@ -74,7 +74,7 @@ const theme = createTheme({
       '#fdba8c',
       '#f59e5b',
       '#d9772a',
-      '#b65c1f',
+      '#b65c1f', //
       '#91471a',
       '#6e3615',
       '#4f250f'
@@ -87,7 +87,7 @@ const theme = createTheme({
       '#f8b4b4',
       '#f28b8b',
       '#e06666',
-      '#c94c4c',
+      '#a44a4a', //
       '#a63a3a',
       '#822d2d',
       '#5c1f1f'

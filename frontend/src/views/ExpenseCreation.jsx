@@ -5,14 +5,19 @@ import { useReason } from '../hooks/useReason'
 import Loading from '../components/Loading'
 import { IconBottleFilled, IconCheck, IconCoffee, IconMoodAngry, IconPlus, IconSmoking } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
-import FloatingButton from "../components/FloatingButton"
+import FloatingButton from '../components/FloatingButton'
 import { useCreateExpense } from '../hooks/useExpense'
 import AlertToast from '../components/AlertToast'
 
 export default function ExpenseCreation() {
   const { data: categories, isLoading: isCategoriesLoading } = useCategory()
   const { data: reasons, isLoading: isReasonsLoading } = useReason()
-  const { mutate: mutateCreateExpense, isLoading: isCreateLoading, isError: isCreateError, data: expense } = useCreateExpense()
+  const {
+    mutate: mutateCreateExpense,
+    isLoading: isCreateLoading,
+    isError: isCreateError,
+    data: expense
+  } = useCreateExpense()
 
   const isPageLoading = isCategoriesLoading || isReasonsLoading
 
@@ -33,10 +38,16 @@ export default function ExpenseCreation() {
   const [isInCompany, setIsInCompany] = useState(false)
 
   const [isBtnDisabled, setIsBtnDisabled] = useState(true)
-  const [alertToast, setAlertToast] = useState({title: '', message: '', color: 'error', isVisible: false, timeout: 3000})
+  const [alertToast, setAlertToast] = useState({
+    title: '',
+    message: '',
+    color: 'error',
+    isVisible: false,
+    timeout: 3000
+  })
 
-  const showAlert = (isVisible=false, color='error', title='', message='', timeout=3000) => {
-    setAlertToast({title, message, color, isVisible, timeout})
+  const showAlert = (isVisible = false, color = 'error', title = '', message = '', timeout = 3000) => {
+    setAlertToast({ title, message, color, isVisible, timeout })
   }
 
   const selectCategory = (category) => {
@@ -101,15 +112,14 @@ export default function ExpenseCreation() {
 
   useEffect(() => {
     if (expense) {
-      showAlert(true, 'success', "Spesa creata!", "", 1500)
+      showAlert(true, 'success', 'Spesa creata!', '', 1500)
       resetData()
     }
   }, [expense])
 
   useEffect(() => {
-    if (isCreateError) showAlert(true, 'error', "Si è verificato un errore!")
+    if (isCreateError) showAlert(true, 'error', 'Si è verificato un errore!')
   }, [isCreateError])
-
 
   useEffect(() => {
     setIsBtnDisabled(!(selectedCategory && price > 0))
@@ -177,16 +187,16 @@ export default function ExpenseCreation() {
 
             <Group justify='space-around' w='100%'>
               <Checkbox
-                size="md"
-                color="accent"
+                size='md'
+                color='accent'
                 checked={isOnline}
                 onChange={(event) => setIsOnline(event.currentTarget.checked)}
                 label='Online'
               />
 
               <Checkbox
-                size="md"
-                color="accent"
+                size='md'
+                color='accent'
                 checked={isInCompany}
                 onChange={(event) => setIsInCompany(event.currentTarget.checked)}
                 label='In compagnia'
@@ -223,21 +233,20 @@ export default function ExpenseCreation() {
             <Card w='100%'>
               <Text size='xl' mb='lg' fw={700}>
                 Quanto ci hai pensato?
-                <Text span style={{display: 'block'}} size='sm' c='dimmed'>
+                <Text span style={{ display: 'block' }} size='sm' c='dimmed'>
                   (1 istantaneo - 5 troppo)
                 </Text>
               </Text>
               <Group justify='center'>
-                {['error', 'primary', 'yellow', 'green', 'accent'].map((d, i) => (
+                {['#a44a4a', '#c16340', '#ccaa2e', '#4e8536', '#6f51b7'].map((d, i) => (
                   <Button
                     color={d}
-                    variant={
-                      !selectedDecisionTime ? ''
-                      : selectedDecisionTime === i+1 ? 'filled' : 'outline'
-                    }
+                    variant={!selectedDecisionTime ? '' : selectedDecisionTime === i + 1 ? 'filled' : 'outline'}
                     key={i}
-                    onClick={() => selectDecisionTime(i+1)}
-                  >{i+1}</Button>
+                    onClick={() => selectDecisionTime(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
                 ))}
               </Group>
             </Card>
@@ -245,26 +254,25 @@ export default function ExpenseCreation() {
             <Card w='100%'>
               <Text size='xl' mb='lg' fw={700}>
                 Quanto ti sei pentito?
-                <Text span style={{display: 'block'}} size='sm' c='dimmed'>
+                <Text span style={{ display: 'block' }} size='sm' c='dimmed'>
                   (0 per niente - 3 troppo)
                 </Text>
               </Text>
               <Group justify='center'>
-                {['green', 'yellow', 'primary', 'error'].map((d, i) => (
+                {['#4e8536', '#ccaa2e', '#c16340', '#a44a4a'].map((d, i) => (
                   <Button
                     color={d}
-                    variant={
-                      !selectedRegretLevel ? ''
-                      : selectedRegretLevel === i+1 ? 'filled' : 'outline'
-                    }
+                    variant={!selectedRegretLevel ? '' : selectedRegretLevel === i + 1 ? 'filled' : 'outline'}
                     key={i}
-                    onClick={() => selectRegretLevel(i+1)}
-                  >{i+1}</Button>
+                    onClick={() => selectRegretLevel(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
                 ))}
               </Group>
             </Card>
 
-            <Card w="100%">
+            <Card w='100%'>
               <Text size='xl' mb='xs' fw={700}>
                 Descrizione
               </Text>
@@ -274,12 +282,12 @@ export default function ExpenseCreation() {
                 autosize
                 minRows={2}
                 maxRows={4}
-                placeholder="Dettagli..."
+                placeholder='Dettagli...'
               />
             </Card>
           </Flex>
 
-          <div style={{paddingBottom: '22vh'}}></div>
+          <div style={{ paddingBottom: '22vh' }}></div>
         </Container>
       )}
 
@@ -289,10 +297,16 @@ export default function ExpenseCreation() {
         color={alertToast.color}
         visible={alertToast.isVisible}
         timeout={alertToast.timeout}
-        onClose={() => setAlertToast((alertToast) => alertToast.isVisible = false)}
+        onClose={() => setAlertToast((alertToast) => (alertToast.isVisible = false))}
       />
 
-      <FloatingButton onClick={createExpense} text="CREA" icon={<IconCheck size={25} />} loading={isCreateLoading} disabled={isBtnDisabled} />
+      <FloatingButton
+        onClick={createExpense}
+        text='CREA'
+        icon={<IconCheck size={25} />}
+        loading={isCreateLoading}
+        disabled={isBtnDisabled}
+      />
     </>
   )
 }
