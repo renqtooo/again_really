@@ -13,10 +13,7 @@ export const useProfile = () => {
 }
 
 export const useUpdateSalary = () => {
-  const { session } = useAuth()
-
   return useMutation({
-    mutationFn: (salary) =>
-      updateSalary(salary, session.user.id)
+    mutationFn: (salary) => updateSalary(salary)
   })
 }

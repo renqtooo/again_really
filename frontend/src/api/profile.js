@@ -10,12 +10,8 @@ export const getProfile = async (session) => {
   return data
 }
 
-export const updateSalary = async (salary, id_user) => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .update({ salary })
-    .eq('id_profile', id_user)
-    .select()
+export const updateSalary = async (salary) => {
+  const { data, error } = await supabase.from('profiles').update({ salary }).select()
 
   if (error) throw error
   return data

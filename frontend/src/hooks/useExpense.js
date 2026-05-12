@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createExpense } from '../api/expense'
-import { getExpenseTotalStats } from '../api/expense'
-import { useAuth } from '../auth/AuthProvider'
+import { getExpenseTotalStats, getRecentExpenses } from '../api/expense'
 
 export const useCreateExpense = () => {
   const queryClient = useQueryClient()
@@ -13,17 +12,25 @@ export const useCreateExpense = () => {
       queryClient.invalidateQueries({
         queryKey: ['expense_total_stats']
       })
+      queryClient.invalidateQueries({
+        queryKey: ['recent_expenses']
+      })
     }
+  })
+}
+
+export const useRecentExpenses = () => {
+  return useQuery({
+    queryKey: ['recent_expenses'],
+    queryFn: getRecentExpenses
   })
 }
 
 // *** STATS ***
 
 export const useExpenseTotalStats = () => {
-  const { session } = useAuth()
-
   return useQuery({
     queryKey: ['expense_total_stats'],
-    queryFn: () => getExpenseTotalStats(session.user.id)
+    queryFn: getExpenseTotalStats
   })
 }

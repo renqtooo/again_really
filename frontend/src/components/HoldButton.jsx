@@ -11,7 +11,7 @@ const HoldButton = ({ icon, holdTime = 1200, onComplete }) => {
   const hasTriggeredRef = useRef(false)
 
   const startColor = theme.colors.gray[9]
-  const endColor = theme.colors.primary[6]
+  const endColor = theme.colors.accent[6]
 
   const animate = (time) => {
     if (lastTimeRef.current !== undefined) {

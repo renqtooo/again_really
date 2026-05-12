@@ -1,5 +1,6 @@
 import {
-  Button,
+  Box,
+  Card,
   Container,
   Divider,
   Flex,
@@ -28,7 +29,6 @@ import Loading from '../components/Loading'
 import { useLogout } from '../hooks/useAuth'
 import Header from '../components/Header'
 import { useExpenseTotalStats } from '../hooks/useExpense'
-import StatCard from '../components/StatCard'
 import { useEffect, useState } from 'react'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { formatCurrency } from '../composables/currency'
@@ -43,17 +43,20 @@ export default function Profile() {
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [showSalaryDialog, setShowSalaryDialog] = useState(false)
+
   const [salary, setSalary] = useState(null)
   const [tempSalary, setTempSalary] = useState(0)
+
+  useEffect(() => {
+    if (profileData?.salary != null) {
+      setSalary(profileData.salary)
+    }
+  }, [profileData])
 
   const openSalaryDialog = () => {
     setTempSalary(salary ?? 0)
     setShowSalaryDialog(true)
   }
-
-  useEffect(() => {
-    if (profileData?.salary != null) setSalary(profileData.salary)
-  }, [profileData])
 
   if (isProfileLoading) {
     return <Loading />
@@ -61,94 +64,226 @@ export default function Profile() {
 
   return (
     <>
-      <Header title='Profilo' />
+      <Box
+        style={{
+          minHeight: '100dvh',
+          background: 'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Header title='Profilo' />
 
-      <Container size='md' py='xl' pb={120}>
-        <Stack gap='xl'>
-          {/* HERO */}
-          <Paper
-            radius='2xl'
-            p='xl'
-            withBorder
-            shadow='md'
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,140,0,0.08), rgba(255,200,120,0.08))'
-            }}
-          >
-            <div>
-              <Group justify='space-between' align='center'>
-                <Title order={2}>{profileData?.username}</Title>
-                <Button size='xs' color='error' onClick={() => setShowConfirmDialog(true)}>
-                  <IconLogout2 />
-                </Button>
+        {/* BACKGROUND BLURS */}
+        <Box
+          style={{
+            position: 'absolute',
+            width: 320,
+            height: 320,
+            borderRadius: '50%',
+            background: '#3b82f6',
+            filter: 'blur(120px)',
+            top: -120,
+            right: -100,
+            opacity: 0.35
+          }}
+        />
+
+        <Box
+          style={{
+            position: 'absolute',
+            width: 260,
+            height: 260,
+            borderRadius: '50%',
+            background: '#8b5cf6',
+            filter: 'blur(120px)',
+            bottom: 80,
+            left: -80,
+            opacity: 0.3
+          }}
+        />
+
+        <Container
+          size='sm'
+          pb={140}
+          style={{
+            position: 'relative',
+            zIndex: 2
+          }}
+        >
+          <Stack gap='xl'>
+            {/* HERO */}
+            <Paper
+              radius='32px'
+              p='xl'
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(20px)',
+                color: 'white'
+              }}
+            >
+              <Group justify='space-between' align='flex-start'>
+                <Box>
+                  <Title
+                    order={1}
+                    fw={900}
+                    style={{
+                      fontSize: 42,
+                      lineHeight: 1
+                    }}
+                  >
+                    {profileData?.username}
+                  </Title>
+
+                  <Text
+                    mt='lg'
+                    onClick={openSalaryDialog}
+                    style={{
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Text span c='gray.4'>
+                      Stipendio:{' '}
+                    </Text>
+
+                    <Text span fw={800} c='white'>
+                      {salary != null ? `€ ${formatCurrency(salary)}` : '(clicca per impostare)'}
+                    </Text>
+                  </Text>
+                </Box>
+
+                <ThemeIcon onClick={() => setShowConfirmDialog(true)} size={60} radius='xl' variant='light' color='red'>
+                  <IconLogout2 size={30} />
+                </ThemeIcon>
+              </Group>
+            </Paper>
+
+            {/* STATS */}
+            <Card
+              radius='32px'
+              py='xl'
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                backdropFilter: 'blur(18px)',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <Group px='sm' justify='space-between' mb='lg'>
+                <Group>
+                  <ThemeIcon radius='xl' size={48} variant='gradient' gradient={{ from: 'violet', to: 'grape' }}>
+                    <IconChartBar size={24} />
+                  </ThemeIcon>
+
+                  <Title order={3} c='white'>
+                    Statistiche
+                  </Title>
+                </Group>
               </Group>
 
-              <Text onClick={openSalaryDialog} mt='md' c='dimmed' size='lg'>
-                Stipendio:{' '}
-                <Text span fw={700} c='orange'>
-                  {salary != null ? `€ ${formatCurrency(salary)}` : '(clicca per impostare)'}
-                </Text>
-              </Text>
-            </div>
-          </Paper>
+              <Divider mb='xl' color='rgba(255,255,255,0.08)' />
 
-          {/* STATS */}
-          <Paper radius='2xl' p='xl' withBorder shadow='sm'>
-            <Group mb='md'>
-              <ThemeIcon color='orange' variant='light' size={40}>
-                <IconChartBar size={22} />
-              </ThemeIcon>
+              {isExpenseTotalStatsLoading ? (
+                <Flex justify='center' py='xl'>
+                  <Loader color='blue' />
+                </Flex>
+              ) : (
+                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='md'>
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Totale acquisti
+                        </Text>
 
-              <Title order={3}>Statistiche</Title>
-            </Group>
+                        <Text fw={900} size='xl' c='white'>
+                          {expenseTotalStats?.total_expenses_count ?? 0}
+                        </Text>
+                      </Box>
 
-            <Divider mb='xl' />
+                      <ThemeIcon size={50} radius='xl' variant='light' color='blue'>
+                        <IconReceipt2 size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
 
-            {isExpenseTotalStatsLoading ? (
-              <Flex justify='center' py='xl'>
-                <Loader color='orange' />
-              </Flex>
-            ) : (
-              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='lg'>
-                <StatCard
-                  title='Totale acquisti'
-                  value={`${expenseTotalStats?.total_expenses_count ?? 0}`}
-                  icon={<IconReceipt2 size={24} />}
-                  color='primary'
-                />
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Totale spese
+                        </Text>
 
-                <StatCard
-                  title='Totale spese'
-                  value={`€ ${formatCurrency(expenseTotalStats?.total_amount) ?? 0}`}
-                  icon={<IconCash size={24} />}
-                  color='blue'
-                />
+                        <Text fw={900} size='xl' c='white'>
+                          € {formatCurrency(expenseTotalStats?.total_amount)}
+                        </Text>
+                      </Box>
 
-                <StatCard
-                  title='Spesa media'
-                  value={`€ ${formatCurrency(expenseTotalStats?.avg_amount) ?? 0}`}
-                  icon={<IconCreditCard size={24} />}
-                  color='grape'
-                />
+                      <ThemeIcon size={50} radius='xl' variant='light' color='cyan'>
+                        <IconCash size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
 
-                <StatCard
-                  title='Spesa massima'
-                  value={`€ ${formatCurrency(expenseTotalStats?.max_amount) ?? 0}`}
-                  icon={<IconTrendingUp size={24} />}
-                  color='red'
-                />
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Media giornaliera
+                        </Text>
 
-                <StatCard
-                  title='Spesa minima'
-                  value={`€ ${formatCurrency(expenseTotalStats?.min_amount) ?? 0}`}
-                  icon={<IconTrendingDown size={24} />}
-                  color='teal'
-                />
-              </SimpleGrid>
-            )}
-          </Paper>
-        </Stack>
-      </Container>
+                        <Text fw={900} size='xl' c='white'>
+                          € {formatCurrency(expenseTotalStats?.daily_avg_last_month)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='grape'>
+                        <IconCreditCard size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Spesa massima
+                        </Text>
+
+                        <Text fw={900} size='xl' c='red.4'>
+                          € {formatCurrency(expenseTotalStats?.max_amount)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='red'>
+                        <IconTrendingUp size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Spesa minima
+                        </Text>
+
+                        <Text fw={900} size='xl' c='teal.3'>
+                          € {formatCurrency(expenseTotalStats?.min_amount)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='teal'>
+                        <IconTrendingDown size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+                </SimpleGrid>
+              )}
+            </Card>
+          </Stack>
+        </Container>
+      </Box>
 
       <ConfirmDialog
         opened={showConfirmDialog}
@@ -165,7 +300,9 @@ export default function Profile() {
         }}
         onConfirm={() => {
           setSalary(tempSalary > 0 ? Number(tempSalary) : null)
+
           updateSalary(tempSalary > 0 ? Number(tempSalary) : null)
+
           setShowSalaryDialog(false)
         }}
         title='Stipendio'

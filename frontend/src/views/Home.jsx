@@ -1,12 +1,30 @@
-import { Button, Container, Flex, Grid, Stack, Title } from '@mantine/core'
-import Header from '../components/Header'
-import { IconBasketDollar, IconCoffee, IconPlus } from '@tabler/icons-react'
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Group,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title
+} from '@mantine/core'
+
+import { IconArrowUpRight, IconBasketDollar, IconCoffee, IconPlus } from '@tabler/icons-react'
+
 import { useNavigate } from 'react-router-dom'
-import { useCreateExpense, useExpenseTotalStats } from '../hooks/useExpense'
+import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
-import ConfirmDialog from '../components/ConfirmDialog'
-import { useEffect, useState } from 'react'
+
+import { useCreateExpense, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
+
 import { useGetCategoryByName } from '../hooks/useCategory'
+
+import { useEffect } from 'react'
 import { formatCurrency } from '../composables/currency'
 
 function Home() {
@@ -15,75 +33,197 @@ function Home() {
   const { data: expenseTotalStats } = useExpenseTotalStats()
   const { mutate: getCategoryByName, data: coffee } = useGetCategoryByName()
   const { mutate: mutateCreateExpense } = useCreateExpense()
-
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const { data: recentExpenses } = useRecentExpenses()
 
   useEffect(() => {
     getCategoryByName('Caffè')
   }, [])
 
-  const [dialog, setDialog] = useState({ title: '', message: '', isVisible: false })
-
   const quickCoffee = () => {
-    setSelectedCategory(coffee)
-    setDialog({ title: 'Caffè ' + formatCurrency(coffee?.usual_price) + '€?', isVisible: true })
+    createExpense(coffee)
   }
 
-  const createExpense = () => {
+  const createExpense = (category) => {
     const payload = {
-      id_category: selectedCategory?.id_category,
-      amount: selectedCategory?.usual_price
+      id_category: category?.id_category,
+      amount: category?.usual_price
     }
 
     mutateCreateExpense(payload)
-
-    setSelectedCategory(null)
-    setDialog({ title: '', message: '', isVisible: false })
   }
 
   return (
     <>
-      <Header title={'Again? Really?'} />
+      <Box
+        style={{
+          minHeight: '100dvh',
+          background: 'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Header title={'Again? Really?'} />
 
-      <Container style={{ height: '90dvh' }}>
-        <div style={{ paddingTop: '6rem' }}></div>
+        {/* background blur circles */}
+        <Box
+          style={{
+            position: 'absolute',
+            width: 300,
+            height: 300,
+            borderRadius: '50%',
+            background: '#3b82f6',
+            filter: 'blur(120px)',
+            top: -80,
+            right: -80,
+            opacity: 0.4
+          }}
+        />
 
-        <Title size={50} style={{ textAlign: 'center' }}>
-          {expenseTotalStats?.total_amount ? '€ ' + formatCurrency(expenseTotalStats?.total_amount) : '€ 0.00'}
-        </Title>
+        <Box
+          style={{
+            position: 'absolute',
+            width: 240,
+            height: 240,
+            borderRadius: '50%',
+            background: '#8b5cf6',
+            filter: 'blur(120px)',
+            bottom: 100,
+            left: -80,
+            opacity: 0.35
+          }}
+        />
 
-        <div style={{ paddingTop: '3rem' }}></div>
+        <Container size='sm' pb={140} style={{ position: 'relative', zIndex: 2 }}>
+          <Stack gap='xl'>
+            {/* HERO */}
+            <Paper
+              radius='32px'
+              p='xl'
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(20px)',
+                color: 'white'
+              }}
+            >
+              <Group justify='space-between' align='flex-start'>
+                <Box>
+                  <Text c='gray.3' fw={500}>
+                    Spese Totali
+                  </Text>
 
-        <Grid mt='xl' justify='center' gap='lg'>
-          <HoldButton icon={<IconCoffee size={40} />} onComplete={quickCoffee} />
+                  <Title
+                    order={1}
+                    fw={900}
+                    style={{
+                      fontSize: 52,
+                      lineHeight: 1
+                    }}
+                  >
+                    € {expenseTotalStats?.total_amount ? formatCurrency(expenseTotalStats?.total_amount) : '0.00'}
+                  </Title>
+                </Box>
 
-          <HoldButton
-            holdTime={0}
-            icon={<IconPlus size={40} />}
-            onComplete={() => {
-              console.log('aggiungi quick action')
-            }}
-          />
-        </Grid>
+                <ThemeIcon size={56} radius='xl' variant='gradient' gradient={{ from: 'blue', to: 'accent' }}>
+                  <IconArrowUpRight size={30} />
+                </ThemeIcon>
+              </Group>
 
-        <Flex justify='center' align='center' direction='column'>
-          <Button
-            onClick={() => navigate('/expense/create')}
-            size='xl'
-            leftSection={<IconBasketDollar size={30} />}
-            style={{ position: 'fixed', bottom: '15vh' }}
-          >
-            Nuova Spesa
-          </Button>
-        </Flex>
-      </Container>
+              <SimpleGrid cols={2} mt='xl'>
+                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)'>
+                  <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
+                    Questo mese
+                  </Text>
 
-      <ConfirmDialog
-        opened={dialog.isVisible}
-        title={dialog.title}
-        onClose={() => setDialog({ isVisible: false })}
-        onConfirm={createExpense}
-      />
+                  <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
+                    {'€ ' + formatCurrency(expenseTotalStats?.last_month_total)}
+                  </Text>
+                </Card>
+
+                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)'>
+                  <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
+                    Media giornaliera
+                  </Text>
+
+                  <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
+                    {'€ ' + formatCurrency(expenseTotalStats?.daily_avg_last_month)}
+                  </Text>
+                </Card>
+              </SimpleGrid>
+            </Paper>
+
+            {/* QUICK ACTIONS */}
+            <Stack gap='md'>
+              <Text ml='md' c='white' fw={700} size='lg'>
+                Quick Actions
+              </Text>
+
+              <Group grow>
+                <Flex direction='column' align='center' justify='center' gap='sm'>
+                  <HoldButton icon={<IconCoffee size={34} />} onComplete={quickCoffee} />
+
+                  <Text fw={700}>Caffè € {formatCurrency(coffee?.usual_price)}</Text>
+                </Flex>
+
+                <Flex direction='column' align='center' gap='sm'>
+                  <Text onClick={() => navigate('/expense/create')}>
+                    <IconPlus size={34} />
+                  </Text>
+                  <Text fw={700}>Nuova spesa</Text>
+                </Flex>
+              </Group>
+            </Stack>
+
+            {/* RECENTI */}
+            <Card
+              radius='32px'
+              py='xl'
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                backdropFilter: 'blur(18px)',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <Title style={{ textAlign: 'center' }} mb='lg' order={3} c='white'>
+                Recenti
+              </Title>
+              {recentExpenses?.length === 0 && (
+                <Text style={{ textAlign: 'center' }} c='dimmed'>
+                  Nessuna spesa recente
+                </Text>
+              )}
+              <Stack gap='sm'>
+                {recentExpenses?.map((e) => (
+                  <Paper key={e.id_expense} radius='xl' p='md' bg='rgba(255,255,255,0.04)'>
+                    <Group mx='xs' justify='space-between'>
+                      <Group>
+                        <Box>
+                          <Text c='white' fw={700}>
+                            {e.category.name}
+                          </Text>
+
+                          <Text size='sm' c='dimmed'>
+                            {new Date(e.created_at).toLocaleString('it-IT', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Text>
+                        </Box>
+                      </Group>
+
+                      <Text fw={800} size='lg' c='red.4'>
+                        - € {formatCurrency(e.amount)}
+                      </Text>
+                    </Group>
+                  </Paper>
+                ))}
+              </Stack>
+            </Card>
+          </Stack>
+        </Container>
+      </Box>
     </>
   )
 }
