@@ -36,6 +36,8 @@ jobs:
       - name: Build project
         run: npm run build
         working-directory: frontend
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
 
       - name: Upload dist artifact
         uses: actions/upload-pages-artifact@v3
