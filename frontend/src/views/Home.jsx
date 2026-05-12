@@ -255,6 +255,7 @@ function Home() {
         onClose={() => setShowExpenseDialog(false)}
         onConfirm={() => handleDeleteExpense(showExpenseDialog)}
         title='Eliminazione spesa'
+        confirmText='Elimina'
         message={
           '€ ' +
           formatCurrency(showExpenseDialog?.amount) +
