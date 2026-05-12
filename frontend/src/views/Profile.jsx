@@ -15,11 +15,13 @@ import {
 } from '@mantine/core'
 
 import {
+  IconAlertTriangle,
   IconCash,
   IconChartBar,
   IconCreditCard,
   IconLogout2,
   IconReceipt2,
+  IconShieldCheckFilled,
   IconTrendingDown,
   IconTrendingUp
 } from '@tabler/icons-react'
@@ -247,7 +249,43 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Spesa massima
+                          Spesa massima in un giorno
+                        </Text>
+
+                        <Text fw={900} size='xl' c='red.4'>
+                          € {formatCurrency(expenseTotalStats?.max_daily_total)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='red'>
+                        <IconAlertTriangle size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Spesa minima in un giorno
+                        </Text>
+
+                        <Text fw={900} size='xl' c='teal.3'>
+                          € {formatCurrency(expenseTotalStats?.min_daily_total)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='teal'>
+                        <IconShieldCheckFilled size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
+                          Spesa massima di sempre
                         </Text>
 
                         <Text fw={900} size='xl' c='red.4'>
@@ -265,7 +303,7 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Spesa minima
+                          Spesa minima di sempre
                         </Text>
 
                         <Text fw={900} size='xl' c='teal.3'>
