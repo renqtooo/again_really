@@ -1,30 +1,16 @@
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Card,
-  Container,
-  Flex,
-  Group,
-  Paper,
-  SimpleGrid,
-  Stack,
-  Text,
-  ThemeIcon,
-  Title
-} from '@mantine/core'
+import { Box, Card, Container, Flex, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
 
-import { IconArrowUpRight, IconBasketDollar, IconCoffee, IconPlus } from '@tabler/icons-react'
+import { IconArrowUpRight, IconCoffee, IconPlus } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
 import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
 import { useGetCategoryByName } from '../hooks/useCategory'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
-import ConfirmDialog from "../components/ConfirmDialog"
+import ConfirmDialog from '../components/ConfirmDialog'
 import SlotCounter from 'react-slot-counter'
-import {usePrevious} from "../hooks/usePrevious"
+import { usePrevious } from '../hooks/usePrevious'
 
 function Home() {
   const navigate = useNavigate()
@@ -38,8 +24,12 @@ function Home() {
   const [showExpenseDialog, setShowExpenseDialog] = useState(false)
   const totalAmount = expenseTotalStats?.total_amount
   const previousTotal = usePrevious(totalAmount)
+  const mountedRef = useRef(false)
+
+  const shouldAnimate = mountedRef.current && previousTotal != null && previousTotal !== totalAmount
 
   useEffect(() => {
+    mountedRef.current = true
     getCategoryByName('Caffè')
   }, [])
 
@@ -129,24 +119,22 @@ function Home() {
                       lineHeight: 1,
                       display: 'flex',
                       alignItems: 'end',
-                      gap: 8,
+                      gap: 8
                     }}
                   >
                     <span>€</span>
 
-                    <SlotCounter
-                      value={
-                        totalAmount
-                          ? formatCurrency(totalAmount)
-                          : '0.00'
-                      }
-                      autoAnimationStart={
-                        previousTotal != null &&
-                        previousTotal !== totalAmount
-                      }
-                      duration={1.5}
-                      dummyCharacters={['0','1','2','3','4','5','6','7','8','9']}
-                    />
+                    {totalAmount != null && (
+                      <SlotCounter
+                        value={formatCurrency(totalAmount)}
+                        separatorCharacters={['.', ',']}
+                        autoAnimationStart={shouldAnimate}
+                        duration={1.5}
+                        dummyCharacters={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']}
+                      />
+                    )}
+
+                    {totalAmount == null && '0.00'}
                   </Title>
                 </Box>
 
@@ -156,7 +144,12 @@ function Home() {
               </Group>
 
               <SimpleGrid cols={2} mt='xl'>
-                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)' style={{display: 'flex', justifyContent: 'space-between'}}>
+                <Card
+                  radius='xl'
+                  p='md'
+                  bg='rgba(255,255,255,0.06)'
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
                   <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
                     Questo mese
                   </Text>
@@ -220,7 +213,13 @@ function Home() {
               )}
               <Stack gap='sm'>
                 {recentExpenses?.map((e) => (
-                  <Paper onClick={() => setShowExpenseDialog(e)} key={e.id_expense} radius='xl' p='md' bg='rgba(255,255,255,0.04)'>
+                  <Paper
+                    onClick={() => setShowExpenseDialog(e)}
+                    key={e.id_expense}
+                    radius='xl'
+                    p='md'
+                    bg='rgba(255,255,255,0.04)'
+                  >
                     <Group mx='xs' justify='space-between'>
                       <Group>
                         <Box>
@@ -256,7 +255,19 @@ function Home() {
         onClose={() => setShowExpenseDialog(false)}
         onConfirm={() => handleDeleteExpense(showExpenseDialog)}
         title='Eliminazione spesa'
-        message={'€ ' + formatCurrency(showExpenseDialog?.amount) + ' ' + showExpenseDialog?.category?.name + ' - ' + new Date(showExpenseDialog?.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+        message={
+          '€ ' +
+          formatCurrency(showExpenseDialog?.amount) +
+          ' ' +
+          showExpenseDialog?.category?.name +
+          ' - ' +
+          new Date(showExpenseDialog?.created_at).toLocaleString('it-IT', {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        }
       />
     </>
   )

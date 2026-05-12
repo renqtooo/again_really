@@ -1,5 +1,5 @@
 export const formatCurrency = (value) => {
-  if (!value) return '0.00'
+  if (value == null) return '0.00'
 
   const [intPart, decPart = ''] = String(value).split('.')
 
