@@ -1,16 +1,33 @@
-import { Divider, Title, useMantineColorScheme, useMantineTheme } from '@mantine/core'
+import { Box, Divider, Group, Text } from '@mantine/core'
 
 export default function Header({ title = '' }) {
-  const theme = useMantineTheme()
-  const { colorScheme } = useMantineColorScheme()
-  const bg = colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0]
-
   return (
-    <div style={{ position: 'sticky', top: '0', width: '100%', zIndex: 100, background: bg }}>
-      <Title pl='xl' pt='sm'>
-        {title}
-      </Title>
-      <Divider my='sm'></Divider>
-    </div>
+    <Box
+      mb='lg'
+      style={{
+        position: 'sticky',
+        top: 0,
+        width: '100%',
+        zIndex: 100,
+        backdropFilter: 'blur(24px)',
+        background: 'rgba(15,23,42,0.72)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)'
+      }}
+    >
+      <Group px='xl' py='lg' justify='space-between' align='center'>
+        <Text
+          fw={900}
+          size='32px'
+          c='white'
+          style={{
+            letterSpacing: '-1px'
+          }}
+        >
+          {title}
+        </Text>
+      </Group>
+
+      <Divider color='rgba(255,255,255,0.06)' />
+    </Box>
   )
 }
