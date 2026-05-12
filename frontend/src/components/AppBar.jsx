@@ -38,7 +38,7 @@ export default function AppBar() {
         px='lg'
         py='md'
         style={{
-          background: 'rgba(5, 16, 41, 0.72)',
+          background: 'linear-gradient(to top, rgba(13, 26, 59, 0.72) 0%, rgba(37, 56, 105, 0.78) 70%)',
           backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255,255,255,0.08)',
           boxShadow: '0 20px 40px rgba(0,0,0,0.35)'
