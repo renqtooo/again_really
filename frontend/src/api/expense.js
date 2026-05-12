@@ -31,6 +31,16 @@ export const getRecentExpenses = async () => {
   return data
 }
 
+export const deleteExpenseById = async (id_expense) => {
+  const { data, error } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('id_expense', id_expense)
+
+    if (error) throw error
+    return data
+}
+
 // *** STATS ***
 
 export const getExpenseTotalStats = async () => {

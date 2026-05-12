@@ -15,17 +15,14 @@ import {
 } from '@mantine/core'
 
 import { IconArrowUpRight, IconBasketDollar, IconCoffee, IconPlus } from '@tabler/icons-react'
-
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
-
-import { useCreateExpense, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
-
+import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
 import { useGetCategoryByName } from '../hooks/useCategory'
-
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
+import ConfirmDialog from "../components/ConfirmDialog"
 
 function Home() {
   const navigate = useNavigate()
@@ -34,6 +31,9 @@ function Home() {
   const { mutate: getCategoryByName, data: coffee } = useGetCategoryByName()
   const { mutate: mutateCreateExpense } = useCreateExpense()
   const { data: recentExpenses } = useRecentExpenses()
+  const { mutate: deleteExpense } = useDeleteExpenseById()
+
+  const [showExpenseDialog, setShowExpenseDialog] = useState(false)
 
   useEffect(() => {
     getCategoryByName('Caffè')
@@ -50,6 +50,11 @@ function Home() {
     }
 
     mutateCreateExpense(payload)
+  }
+
+  const handleDeleteExpense = (expense) => {
+    deleteExpense(expense.id_expense)
+    setShowExpenseDialog(false)
   }
 
   return (
@@ -130,7 +135,7 @@ function Home() {
               </Group>
 
               <SimpleGrid cols={2} mt='xl'>
-                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)'>
+                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)' style={{display: 'flex', justifyContent: 'space-between'}}>
                   <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
                     Questo mese
                   </Text>
@@ -155,7 +160,7 @@ function Home() {
             {/* QUICK ACTIONS */}
             <Stack gap='md'>
               <Text ml='md' c='white' fw={700} size='lg'>
-                Quick Actions
+                Azioni veloci
               </Text>
 
               <Group grow>
@@ -194,7 +199,7 @@ function Home() {
               )}
               <Stack gap='sm'>
                 {recentExpenses?.map((e) => (
-                  <Paper key={e.id_expense} radius='xl' p='md' bg='rgba(255,255,255,0.04)'>
+                  <Paper onClick={() => setShowExpenseDialog(e)} key={e.id_expense} radius='xl' p='md' bg='rgba(255,255,255,0.04)'>
                     <Group mx='xs' justify='space-between'>
                       <Group>
                         <Box>
@@ -224,6 +229,14 @@ function Home() {
           </Stack>
         </Container>
       </Box>
+
+      <ConfirmDialog
+        opened={showExpenseDialog}
+        onClose={() => setShowExpenseDialog(false)}
+        onConfirm={() => handleDeleteExpense(showExpenseDialog)}
+        title='Eliminazione spesa'
+        message={'€ ' + formatCurrency(showExpenseDialog?.amount) + ' ' + showExpenseDialog?.category?.name + ' - ' + new Date(showExpenseDialog?.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+      />
     </>
   )
 }

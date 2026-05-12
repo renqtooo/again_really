@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createExpense } from '../api/expense'
+import { createExpense, deleteExpenseById } from '../api/expense'
 import { getExpenseTotalStats, getRecentExpenses } from '../api/expense'
 
 export const useCreateExpense = () => {
@@ -23,6 +23,24 @@ export const useRecentExpenses = () => {
   return useQuery({
     queryKey: ['recent_expenses'],
     queryFn: getRecentExpenses
+  })
+}
+
+export const useDeleteExpenseById = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id_expense) => deleteExpenseById(id_expense),
+    
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['recent_expenses']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['expense_total_stats']
+      })
+    }
   })
 }
 
