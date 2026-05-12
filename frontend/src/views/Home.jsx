@@ -20,9 +20,11 @@ import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
 import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
 import { useGetCategoryByName } from '../hooks/useCategory'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { formatCurrency } from '../composables/currency'
 import ConfirmDialog from "../components/ConfirmDialog"
+import SlotCounter from 'react-slot-counter'
+import {usePrevious} from "../hooks/usePrevious"
 
 function Home() {
   const navigate = useNavigate()
@@ -34,6 +36,8 @@ function Home() {
   const { mutate: deleteExpense } = useDeleteExpenseById()
 
   const [showExpenseDialog, setShowExpenseDialog] = useState(false)
+  const totalAmount = expenseTotalStats?.total_amount
+  const previousTotal = usePrevious(totalAmount)
 
   useEffect(() => {
     getCategoryByName('Caffè')
@@ -122,10 +126,27 @@ function Home() {
                     fw={900}
                     style={{
                       fontSize: 52,
-                      lineHeight: 1
+                      lineHeight: 1,
+                      display: 'flex',
+                      alignItems: 'end',
+                      gap: 8,
                     }}
                   >
-                    € {expenseTotalStats?.total_amount ? formatCurrency(expenseTotalStats?.total_amount) : '0.00'}
+                    <span>€</span>
+
+                    <SlotCounter
+                      value={
+                        totalAmount
+                          ? formatCurrency(totalAmount)
+                          : '0.00'
+                      }
+                      autoAnimationStart={
+                        previousTotal != null &&
+                        previousTotal !== totalAmount
+                      }
+                      duration={1.5}
+                      dummyCharacters={['0','1','2','3','4','5','6','7','8','9']}
+                    />
                   </Title>
                 </Box>
 
