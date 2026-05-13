@@ -141,7 +141,7 @@ export default function Customize() {
                     <Card
                       key={category?.id_category}
                       radius='28px'
-                      p='lg'
+                      p='xs'
                       style={{
                         background: 'rgba(255,255,255,0.06)',
                         backdropFilter: 'blur(18px)',
