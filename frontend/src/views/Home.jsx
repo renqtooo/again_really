@@ -1,4 +1,4 @@
-import { Box, Card, Container, Flex, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
+import { Box, Card, Container, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
 
 import { IconArrowUpRight, IconCoffee, IconPlus } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
@@ -134,7 +134,7 @@ function Home() {
                       />
                     )}
 
-                    {totalAmount == null && '0.00'}
+                    {totalAmount == null && <Loader style={{alignSelf: 'center'}} color='#3b82f6' />}
                   </Title>
                 </Box>
 
