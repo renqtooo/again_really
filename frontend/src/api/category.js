@@ -21,40 +21,75 @@ export const getCategoryByName = async (name, id_user) => {
   return data
 }
 
+export const getCategoryById = async (id_category) => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('id_category', id_category)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export const getFavouriteCategories = async (id_user) => {
+  const { data, error } = await supabase.rpc('get_favourite_categories', {
+    p_profile_id: id_user
+  })
+
+  if (error) throw error
+  return data
+}
+
 export const updateCategory = async (payload, id_user) => {
-  const { data: existingCategory, error } = await supabase
+  if (payload.id_category) {
+    const { data: existingCategory, error } = await supabase
     .from('categories')
     .select('*')
     .eq('id_profile', id_user)
     .eq('id_category', payload.id_category)
     .maybeSingle()
-  if (error) throw error
-
-  if (existingCategory) {
-    const { data, error } = await supabase
+    if (error) throw error
+    
+    if (existingCategory) {
+      const { data, error } = await supabase
       .from('categories')
       .update({
         name: payload.name,
         usual_price: payload.usual_price,
         icon: payload.icon,
-        id_profile: id_user
+        id_profile: id_user,
+        is_favourite: payload.is_favourite
       })
       .eq('id_category', payload.id_category)
       .eq('id_profile', id_user)
       .select()
-    if (error) throw error
-    return data
-  } else {
-    const { data, error } = await supabase
-      .from('categories')
-      .insert({
-        name: payload.name,
-        usual_price: payload.usual_price,
-        icon: payload.icon,
-        id_profile: id_user
-      })
-      .select()
-    if (error) throw error
-    return data
+      .maybeSingle()
+      if (error) throw error
+      return data
+    }
   }
+  
+  const { data, error } = await supabase
+    .from('categories')
+    .insert({
+      name: payload.name,
+      usual_price: payload.usual_price,
+      icon: payload.icon,
+      id_profile: id_user,
+      is_favourite: payload.is_favourite
+    })
+    .select()
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+export const deleteCategory = async (id_category) => {
+  const { error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id_category', id_category)
+
+  if (error) throw error
 }

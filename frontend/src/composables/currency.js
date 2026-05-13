@@ -32,3 +32,7 @@ export const formatCurrency = (value) => {
 
   return `${intPart}.${String(cents).padStart(2, '0')}`
 }
+
+export const roundCurrency = (value) => {
+  return Math.round(value * 100) / 100
+}

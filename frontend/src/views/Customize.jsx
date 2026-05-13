@@ -12,12 +12,17 @@ import {
 
 import {
   IconEdit,
-  IconSettings
+  IconSettings,
+  IconHeart,
+  IconHeartOff,
+  IconPlus
 } from '@tabler/icons-react'
 
 import Loading from '../components/Loading'
 
 import Header from '../components/Header'
+
+import FloatingButton from '../components/FloatingButton'
 
 import {
   useCategory,
@@ -31,6 +36,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import { useState } from 'react'
 
 import { formatCurrency } from '../composables/currency'
+import { useNavigate } from 'react-router-dom'
 
 export default function Customize() {
   const {
@@ -38,27 +44,13 @@ export default function Customize() {
     isLoading: isCategoriesLoading
   } = useCategory()
 
+  const navigate = useNavigate()
+
   const { mutate: updateCategory } = useUpdateCategory()
 
-  const [selectedCategory, setSelectedCategory] = useState(null)
-
-  const [showDialog, setShowDialog] = useState(false)
-
-  const selectCategory = (category) => {
-    setSelectedCategory({
-      id_category: category.id_category,
-      name: category.name,
-      usual_price: category.usual_price,
-      icon: category.icon
-    })
-
-    setShowDialog(true)
-  }
-
-  const handleUpdateCategory = (category) => {
+  const updateFavourite = (category) => {
+    category.is_favourite = !category.is_favourite
     updateCategory(category)
-
-    setShowDialog(false)
   }
 
   return (
@@ -133,7 +125,7 @@ export default function Customize() {
               </Card>
 
               {/* CATEGORY LIST */}
-              <Stack gap='md'>
+              <Stack mb='xl' pb='xl' gap='md'>
                 {categories?.map((category) => {
                   const IconComponent = iconMap[category?.icon]
 
@@ -169,28 +161,44 @@ export default function Customize() {
                               truncate
                             >
                               {category?.name}
+                              <br />
+                              {category?.usual_price && (
+                                <Text
+                                  component='span'
+                                  fw={900}
+                                  size='lg'
+                                  c='accent'
+                                  truncate
+                                >
+                                  € {formatCurrency(category?.usual_price)}
+                                </Text>
+                              )}
                             </Text>
                           </Box>
                         </Group>
 
-                        <Group gap='sm'>
-                          {category?.usual_price && (
-                            <Text
-                              fw={900}
-                              size='lg'
-                              c='violet'
-                            >
-                              € {formatCurrency(category?.usual_price)}
-                            </Text>
-                          )}
+                        <Group gap='xs'>
+                          <Button
+                            radius='xl'
+                            variant='transparent'
+                            onClick={() => navigate('/category/' + category.id_category, {state:{from:'customize'}})}
+                            size='xs'
+                            style={{padding: '0', width: '2.5rem'}}
+                          >
+                            <IconEdit size={30} />
+                          </Button>
 
                           <Button
                             radius='xl'
-                            variant='gradient'
-                            gradient={{ from: 'blue', to: 'cyan' }}
-                            onClick={() => selectCategory(category)}
+                            variant='transparent'
+                            onClick={() => updateFavourite(category)}
+                            size='xs'
+                            style={{padding: '0', width: '2.5rem'}}
                           >
-                            <IconEdit size={30} />
+                            {category.is_favourite
+                              ? <IconHeartOff size={25} />
+                              : <IconHeart size={25} />
+                            }
                           </Button>
                         </Group>
                       </Group>
@@ -203,20 +211,9 @@ export default function Customize() {
         )}
       </Box>
 
-      <ConfirmDialog
-        opened={showDialog}
-        onClose={() => setShowDialog(false)}
-        onConfirm={() => handleUpdateCategory(selectedCategory)}
-        title={'Modifica prezzo ' + selectedCategory?.name}
-        input
-        value={selectedCategory?.usual_price}
-        min={0}
-        onChange={(val) =>
-          setSelectedCategory({
-            ...selectedCategory,
-            usual_price: val >= 0 ? Number(val) : 0
-          })
-        }
+      <FloatingButton
+          onClick={() => navigate('/category/0', {state:{from:'customize'}})}
+          icon={<IconPlus size={25} />}
       />
     </>
   )

@@ -4,7 +4,7 @@ import { IconCheck, IconPlus } from '@tabler/icons-react'
 
 import Header from '../components/Header'
 
-import { useCategory } from '../hooks/useCategory'
+import { useGetFavouriteCategories } from '../hooks/useCategory'
 import { useReason } from '../hooks/useReason'
 
 import Loading from '../components/Loading'
@@ -18,11 +18,15 @@ import { useCreateExpense } from '../hooks/useExpense'
 import AlertToast from '../components/AlertToast'
 
 import { iconMap } from '../composables/category'
+import { roundCurrency } from '../composables/currency'
+import { useNavigate } from 'react-router-dom'
 
 export default function ExpenseCreation() {
-  const { data: categories, isLoading: isCategoriesLoading } = useCategory()
-
+  const { data: favCategories, isLoading: isCategoriesLoading } = useGetFavouriteCategories()
+  
   const { data: reasons, isLoading: isReasonsLoading } = useReason()
+
+  const navigate = useNavigate()
 
   const {
     mutate: mutateCreateExpense,
@@ -117,7 +121,7 @@ export default function ExpenseCreation() {
     setIsBtnDisabled(true)
     const payload = {
       id_category: selectedCategory.id,
-      amount: price,
+      amount: roundCurrency(price),
       description: description.trim() ? description : null,
       id_reason: selectedReason?.id ?? null,
       is_in_company: isInCompany,
@@ -223,7 +227,7 @@ export default function ExpenseCreation() {
                 }}
               >
                 <Text size='xl' mb='lg' fw={800} c='white'>
-                  <Button mr='sm' radius='xl' variant='gradient' gradient={{ from: 'blue', to: 'cyan' }} size='xs'>
+                  <Button mr='sm' radius='xl' variant='gradient' onClick={() => navigate('/category/0', { state: { from: 'expenseCreation'} })} gradient={{ from: 'blue', to: 'cyan' }} size='xs'>
                     <IconPlus size={18} />
                   </Button>
                   Categoria
@@ -233,7 +237,7 @@ export default function ExpenseCreation() {
                 </Text>
 
                 <Group justify='center'>
-                  {categories.map((category) => {
+                  {favCategories?.map((category) => {
                     const IconComponent = iconMap[category.icon]
 
                     return (

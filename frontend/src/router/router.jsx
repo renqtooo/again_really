@@ -9,6 +9,7 @@ const Home = lazy(() => import('../views/Home'))
 const ExpenseCreation = lazy(() => import('../views/ExpenseCreation'))
 const Profile = lazy(() => import('../views/Profile'))
 const Customize = lazy(() => import('../views/Customize'))
+const CategoryDetail = lazy(() => import('../views/CategoryDetail'))
 
 const router = createHashRouter(
   [
@@ -41,6 +42,10 @@ const router = createHashRouter(
             {
               path: 'customize',
               element: <Customize />
+            },
+            {
+              path: 'category/:id',
+              element: <CategoryDetail />
             }
           ]
         }
