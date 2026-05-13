@@ -285,7 +285,7 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Spesa massima di sempre
+                          Spesa singola massima di sempre
                         </Text>
 
                         <Text fw={900} size='xl' c='red.4'>
@@ -303,7 +303,7 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Spesa minima di sempre
+                          Spesa singola minima di sempre
                         </Text>
 
                         <Text fw={900} size='xl' c='teal.3'>
