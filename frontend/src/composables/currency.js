@@ -34,5 +34,6 @@ export const formatCurrency = (value) => {
 }
 
 export const roundCurrency = (value) => {
-  return Math.round(value * 100) / 100
+  const result = Math.round(value * 100) / 100
+  return result > 0 ? result : 0
 }

@@ -1,33 +1,12 @@
-import {
-  Box,
-  Button,
-  Card,
-  Group,
-  Input,
-  NumberInput,
-  Stack,
-  Text,
-  ThemeIcon
-} from '@mantine/core'
+import { Box, Button, Card, Group, Input, NumberInput, Stack, Text } from '@mantine/core'
 
 import Header from '../components/Header'
 
-import {
-  useLocation,
-  useNavigate,
-  useParams
-} from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import {
-  useEffect,
-  useState
-} from 'react'
+import { useEffect, useState } from 'react'
 
-import {
-  useDeleteCategory,
-  useGetCategoryById,
-  useUpdateCategory
-} from '../hooks/useCategory'
+import { useDeleteCategory, useGetCategoryById, useUpdateCategory } from '../hooks/useCategory'
 
 import { useAuth } from '../auth/AuthProvider'
 
@@ -37,17 +16,10 @@ import { roundCurrency } from '../composables/currency'
 
 import AlertToast from '../components/AlertToast'
 
-import {
-  IconDeviceFloppy,
-  IconHeart,
-  IconHeartOff,
-  IconPlus,
-  IconTag,
-  IconTrashX
-} from '@tabler/icons-react'
+import { IconDeviceFloppy, IconHeart, IconHeartOff, IconPlus, IconTrashX } from '@tabler/icons-react'
 
 export default function CategoryDetail() {
-  const {id: id_category} = useParams()
+  const { id: id_category } = useParams()
   const { session } = useAuth()
 
   const navigate = useNavigate()
@@ -56,20 +28,11 @@ export default function CategoryDetail() {
   const isCreating = id_category === '0'
   const from = location.state?.from
 
-  const {
-    data: getCategory,
-    isLoading: isGetCategoryLoading
-  } = useGetCategoryById(isCreating ? null : id_category)
+  const { data: getCategory, isLoading: isGetCategoryLoading } = useGetCategoryById(isCreating ? null : id_category)
 
-  const {
-    mutate: updateCategory,
-    isLoading: isUpdateCategoryLoading
-  } = useUpdateCategory()
+  const { mutate: updateCategory, isLoading: isUpdateCategoryLoading } = useUpdateCategory()
 
-  const {
-    mutate: deleteCategory,
-    isError: isDeleteCategoryError
-  } = useDeleteCategory()
+  const { mutate: deleteCategory } = useDeleteCategory()
 
   const [category, setCategory] = useState({
     name: '',
@@ -88,12 +51,14 @@ export default function CategoryDetail() {
       name: category.name.trim(),
       usual_price:
         category.usual_price != null
-          ? roundCurrency(category.usual_price)
+          ? roundCurrency(category.usual_price) > 0
+            ? roundCurrency(category.usual_price)
+            : null
           : null
     }
 
     setCategory(updatedCategory)
-    
+
     updateCategory(updatedCategory, {
       onSuccess: (data) => {
         setCategory(data)
@@ -131,14 +96,10 @@ export default function CategoryDetail() {
     if (category.id_profile) {
       deleteCategory(category.id_category, {
         onSuccess: () => {
-          const route = (from === 'categoryCreation')
-            ? -2
-            : (from === 'customize')
-            ? -1
-            : ''
-          
+          const route = from === 'categoryCreation' ? -2 : from === 'customize' ? -1 : ''
+
           navigate(route)
-        },
+        }
       })
     }
   }
@@ -146,11 +107,9 @@ export default function CategoryDetail() {
   const isBtnDisabled =
     category.name.trim() === '' ||
     (category.usual_price != null && category.usual_price <= 0) ||
-    (
-      category.name.trim() === getCategory?.name?.trim() &&
+    (category.name.trim() === getCategory?.name?.trim() &&
       category.usual_price === getCategory?.usual_price &&
-      category.is_favourite === getCategory?.is_favourite
-    )
+      category.is_favourite === getCategory?.is_favourite)
 
   useEffect(() => {
     if (getCategory) setCategory(getCategory)
@@ -160,8 +119,7 @@ export default function CategoryDetail() {
     <Box
       style={{
         minHeight: '100dvh',
-        background:
-          'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
+        background: 'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
         position: 'relative',
         overflow: 'hidden'
       }}
@@ -214,23 +172,17 @@ export default function CategoryDetail() {
           radius='32px'
           p='xl'
           style={{
-            background:
-              'linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04))',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04))',
 
-            border:
-              '1px solid rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.08)',
 
             backdropFilter: 'blur(20px)'
           }}
         >
           <Stack gap='xl'>
-              <Text
-                c='white'
-                fw={900}
-                size='30px'
-              >
-                {isCreating ? 'Nuova' : 'Modifica'} categoria
-              </Text>
+            <Text c='white' fw={900} size='30px'>
+              {isCreating ? 'Nuova' : 'Modifica'} categoria
+            </Text>
 
             <Input
               size='xl'
@@ -269,17 +221,17 @@ export default function CategoryDetail() {
 
                     return
                   }
-                  
+
                   const num = Number(val)
-                  
+
                   setCategory({
                     ...category,
-                    usual_price: num > 0 ? num : null
+                    usual_price: num >= 0 ? num : null
                   })
                 }}
                 placeholder='Prezzo solito'
                 clampBehavior='strict'
-                min={0.01}
+                min={0}
                 hideControls
                 radius='xl'
                 styles={{
@@ -294,11 +246,7 @@ export default function CategoryDetail() {
                 }}
               />
 
-              <Text
-                size='34px'
-                fw={700}
-                c='white'
-              >
+              <Text size='34px' fw={700} c='white'>
                 €
               </Text>
             </Group>
@@ -328,9 +276,7 @@ export default function CategoryDetail() {
                   left: 0
                 }}
               >
-                {category.is_favourite
-                  ? <IconHeartOff size={25} />
-                  : <IconHeart size={25} />}
+                {category.is_favourite ? <IconHeartOff size={25} /> : <IconHeart size={25} />}
               </Button>
 
               <Button
@@ -344,50 +290,38 @@ export default function CategoryDetail() {
                 onClick={handleUpdateCategory}
                 loading={isUpdateCategoryLoading}
                 disabled={isBtnDisabled}
-                leftSection={
-                  isCreating
-                    ? <IconPlus />
-                    : <IconDeviceFloppy />
-                }
+                leftSection={isCreating ? <IconPlus /> : <IconDeviceFloppy />}
                 style={{
                   height: 64,
-                  boxShadow: !isBtnDisabled
-                    ? '0 20px 40px rgba(59,130,246,0.35)'
-                    : '',
+                  boxShadow: !isBtnDisabled ? '0 20px 40px rgba(59,130,246,0.35)' : ''
                 }}
               >
                 {isCreating ? 'Crea' : 'Salva'}
               </Button>
             </Box>
-              
           </Stack>
         </Card>
 
-        {!isCreating &&
-          category.id_profile &&
-          !isGetCategoryLoading && (
-            <Button
-              mt='md'
-              size='xl'
-              radius='xl'
-              onClick={handleDeleteCategory}
-              color='error'
-              loading={isUpdateCategoryLoading}
-              leftSection={<IconTrashX />}
-              style={{
-                background:
-                  'rgba(239,68,68,0.12)',
+        {!isCreating && category.id_profile && !isGetCategoryLoading && (
+          <Button
+            mt='md'
+            size='xl'
+            radius='xl'
+            onClick={handleDeleteCategory}
+            color='error'
+            loading={isUpdateCategoryLoading}
+            leftSection={<IconTrashX />}
+            style={{
+              background: 'rgba(239,68,68,0.12)',
 
-                border:
-                  '1px solid rgba(239,68,68,0.22)',
+              border: '1px solid rgba(239,68,68,0.22)',
 
-                color: '#fca5a5'
-              }}
-            >
-              Elimina categoria
-            </Button>
-          )}
-
+              color: '#fca5a5'
+            }}
+          >
+            Elimina categoria
+          </Button>
+        )}
       </Stack>
 
       <AlertToast
