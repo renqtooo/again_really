@@ -146,11 +146,11 @@ export default function Profile() {
                     }}
                   >
                     <Text span c='gray.4'>
-                      Stipendio:{' '}
+                      Tot. entrate mensili:{' '}
                     </Text>
 
                     <Text span fw={800} c='white'>
-                      {salary != null ? `€ ${formatCurrency(salary)}` : '(clicca per impostare)'}
+                      {salary != null ? `€ ${formatCurrency(salary)}` : '(imposta)'}
                     </Text>
                   </Text>
                 </Box>
@@ -343,7 +343,7 @@ export default function Profile() {
 
           setShowSalaryDialog(false)
         }}
-        title='Stipendio'
+        title='Totale entrate mensili'
         input
         value={tempSalary}
         onChange={(val) => setTempSalary(Number(val) >= 0 ? Number(val) : 0)}
