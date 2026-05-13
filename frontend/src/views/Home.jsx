@@ -15,7 +15,7 @@ import { usePrevious } from '../hooks/usePrevious'
 function Home() {
   const navigate = useNavigate()
 
-  const { data: expenseTotalStats } = useExpenseTotalStats()
+  const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
   const { mutate: getCategoryByName, data: coffee } = useGetCategoryByName()
   const { mutate: mutateCreateExpense } = useCreateExpense()
   const { data: recentExpenses } = useRecentExpenses()
@@ -124,7 +124,7 @@ function Home() {
                   >
                     <span>€</span>
 
-                    {totalAmount != null && (
+                    {!isExpenseTotalStatsLoading && totalAmount != null && (
                       <SlotCounter
                         value={formatCurrency(totalAmount)}
                         separatorCharacters={['.', ',']}
@@ -134,7 +134,8 @@ function Home() {
                       />
                     )}
 
-                    {totalAmount == null && <Loader style={{alignSelf: 'center'}} color='#3b82f6' />}
+                    {isExpenseTotalStatsLoading && <Loader style={{alignSelf: 'center'}} color='#3b82f6' />}
+                    {!isExpenseTotalStatsLoading && totalAmount == null && '0.00'}
                   </Title>
                 </Box>
 
