@@ -1,4 +1,4 @@
-import { Box, Card, Container, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
+import { Box, Card, Container, Divider, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
 
 import { IconArrowUpRight, IconCoffee, IconPlus } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
@@ -49,6 +49,17 @@ function Home() {
   const handleDeleteExpense = (expense) => {
     deleteExpense(expense.id_expense)
     setShowExpenseDialog(false)
+  }
+
+  const isToday = (date) => {
+    const today = new Date()
+    const d = new Date(date)
+
+    return (
+      d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear()
+    )
   }
 
   return (
@@ -213,7 +224,46 @@ function Home() {
                 </Text>
               )}
               <Stack gap='sm'>
-                {recentExpenses?.map((e) => (
+                {recentExpenses?.some(e => isToday(e.created_at)) && (
+                  <Text>Oggi</Text>
+                )}
+                {recentExpenses?.filter(e => isToday(e.created_at))?.map((e) => (
+                  <Paper
+                    onClick={() => setShowExpenseDialog(e)}
+                    key={e.id_expense}
+                    radius='xl'
+                    p='md'
+                    bg='rgba(255,255,255,0.04)'
+                  >
+                    <Group mx='xs' justify='space-between'>
+                      <Group>
+                        <Box>
+                          <Text c='white' fw={700}>
+                            {e.category.name}
+                          </Text>
+
+                          <Text size='sm' c='dimmed'>
+                            {new Date(e.created_at).toLocaleString('it-IT', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Text>
+                        </Box>
+                      </Group>
+
+                      <Text fw={800} size='lg' c='red.4'>
+                        - € {formatCurrency(e.amount)}
+                      </Text>
+                    </Group>
+                  </Paper>
+                ))}
+
+                {recentExpenses?.some(e => !isToday(e.created_at)) && (
+                  <Divider style={{margin: '0 auto'}} size='sm' w='95%' />
+                )}
+                {recentExpenses?.filter(e => !isToday(e.created_at))?.map((e) => (
                   <Paper
                     onClick={() => setShowExpenseDialog(e)}
                     key={e.id_expense}
