@@ -1,6 +1,6 @@
 import { Box, Group, Paper, ThemeIcon } from '@mantine/core'
 
-import { IconEdit, IconHome2, IconUser } from '@tabler/icons-react'
+import { IconEdit, IconHome2, IconPlus, IconUser } from '@tabler/icons-react'
 
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -8,6 +8,10 @@ const tabs = [
   {
     icon: IconHome2,
     path: '/'
+  },
+  {
+    icon: IconPlus,
+    path: '/expense/create'
   },
   {
     icon: IconEdit,
@@ -52,7 +56,7 @@ export default function AppBar() {
             return (
               <ThemeIcon
                 key={i}
-                size={58}
+                size={50}
                 radius='xl'
                 variant={active ? 'gradient' : 'transparent'}
                 gradient={{ from: 'blue', to: 'cyan' }}
@@ -63,7 +67,7 @@ export default function AppBar() {
                   boxShadow: active ? '0 12px 30px rgba(59,130,246,0.35)' : 'none'
                 }}
               >
-                <Icon size={28} stroke={2} color={active ? 'white' : '#94a3b8'} />
+                <Icon size={30} stroke={2} color={active ? 'white' : '#94a3b8'} />
               </ThemeIcon>
             )
           })}

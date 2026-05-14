@@ -7,28 +7,40 @@ export const createExpense = async (payload) => {
   return data
 }
 
-export const getRecentExpenses = async () => {
-  const { data: recentExpenses, error } = await supabase
+export const getExpensesByDate = async (
+    startDate,
+    endDate,
+    page = 1,
+    pageSize = 5
+) => {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+
+  const { data, error, count } = await supabase
     .from('expenses')
-    .select('*')
-    .limit(5)
+    .select(
+      `
+      *,
+      category:categories(*)
+    `,
+      { count: 'exact' }
+    )
+    .gte('created_at', `${startDate}T00:00:00`)
+    .lte('created_at', `${endDate}T23:59:59`)
     .order('created_at', { ascending: false })
+    .range(from, to)
+
   if (error) throw error
 
-  const categoryIds = [...new Set(recentExpenses.map((expense) => expense.id_category))]
-
-  const { data: categories, error: errorCategories } = await supabase
-    .from('categories')
-    .select('*')
-    .in('id_category', categoryIds)
-  if (errorCategories) throw errorCategories
-
-  const data = recentExpenses.map((expense) => ({
-    ...expense,
-    category: categories.find((category) => category.id_category === expense.id_category)
-  }))
-
-  return data
+  return {
+    data,
+    pagination: {
+      page,
+      pageSize,
+      total: count,
+      totalPages: Math.ceil((count || 0) / pageSize)
+    }
+  }
 }
 
 export const deleteExpenseById = async (id_expense) => {

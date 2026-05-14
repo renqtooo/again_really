@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createExpense, deleteExpenseById } from '../api/expense'
-import { getExpenseTotalStats, getRecentExpenses } from '../api/expense'
+import { createExpense, deleteExpenseById, getExpensesByDate } from '../api/expense'
+import { getExpenseTotalStats, } from '../api/expense'
 
 export const useCreateExpense = () => {
   const queryClient = useQueryClient()
@@ -13,16 +13,36 @@ export const useCreateExpense = () => {
         queryKey: ['expense_total_stats']
       })
       queryClient.invalidateQueries({
-        queryKey: ['recent_expenses']
+        queryKey: ['expenses_by_date']
       })
     }
   })
 }
 
-export const useRecentExpenses = () => {
+export const useGetExpensesByDate = (
+  startDate,
+  endDate,
+  page,
+  pageSize
+) => {
   return useQuery({
-    queryKey: ['recent_expenses'],
-    queryFn: getRecentExpenses
+    queryKey: [
+      'expenses_by_date',
+      startDate,
+      endDate,
+      page,
+      pageSize
+    ],
+
+    queryFn: () =>
+      getExpensesByDate(
+        startDate,
+        endDate,
+        page,
+        pageSize
+      ),
+
+    enabled: !!startDate && !!endDate
   })
 }
 
@@ -34,7 +54,7 @@ export const useDeleteExpenseById = () => {
     
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['recent_expenses']
+        queryKey: ['expenses_by_date']
       })
 
       queryClient.invalidateQueries({

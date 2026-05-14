@@ -1,10 +1,10 @@
 import { Box, Card, Container, Divider, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
 
-import { IconArrowUpRight, IconCoffee, IconPlus } from '@tabler/icons-react'
-import { useNavigate } from 'react-router-dom'
+import { IconArrowUpRight, IconCalendarDollar, IconCoffee, IconPlus } from '@tabler/icons-react'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
-import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useRecentExpenses } from '../hooks/useExpense'
+import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
 import { useGetCategoryByName } from '../hooks/useCategory'
 import { useEffect, useRef, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
@@ -18,8 +18,8 @@ function Home() {
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
   const { mutate: getCategoryByName, data: coffee } = useGetCategoryByName()
   const { mutate: mutateCreateExpense } = useCreateExpense()
-  const { data: recentExpenses } = useRecentExpenses()
   const { mutate: deleteExpense } = useDeleteExpenseById()
+  const { data: recentExpenses } = useGetExpensesByDate(new Date().toISOString().split('T')[0], new Date().toISOString().split('T')[0], 1, 500)
 
   const [showExpenseDialog, setShowExpenseDialog] = useState(false)
   const totalAmount = expenseTotalStats?.total_amount
@@ -27,11 +27,6 @@ function Home() {
   const mountedRef = useRef(false)
 
   const shouldAnimate = mountedRef.current && previousTotal != null && previousTotal !== totalAmount
-
-  useEffect(() => {
-    mountedRef.current = true
-    getCategoryByName('Caffè')
-  }, [])
 
   const quickCoffee = () => {
     createExpense(coffee)
@@ -61,6 +56,11 @@ function Home() {
       d.getFullYear() === today.getFullYear()
     )
   }
+
+  useEffect(() => {
+    mountedRef.current = true
+    getCategoryByName('Caffè')
+  }, [])
 
   return (
     <>
@@ -107,6 +107,7 @@ function Home() {
           <Stack gap='xl'>
             {/* HERO */}
             <Paper
+              onClick={() => navigate("/expense")}
               radius='32px'
               p='xl'
               style={{
@@ -151,7 +152,7 @@ function Home() {
                 </Box>
 
                 <ThemeIcon size={56} radius='xl' variant='gradient' gradient={{ from: 'blue', to: 'accent' }}>
-                  <IconArrowUpRight size={30} />
+                  <IconCalendarDollar size={30} />
                 </ThemeIcon>
               </Group>
 
@@ -162,7 +163,7 @@ function Home() {
                   </Text>
 
                   <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
-                    {'€ ' + formatCurrency(recentExpenses?.reduce((sum, e) => sum + e.amount, 0))}
+                    {'€ ' + formatCurrency(recentExpenses?.data?.reduce((sum, e) => sum + e.amount, 0))}
                   </Text>
                 </Card>
                 
@@ -204,99 +205,6 @@ function Home() {
                 </Flex>
               </Group>
             </Stack>
-
-            {/* RECENTI */}
-            <Card
-              radius='32px'
-              py='xl'
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                backdropFilter: 'blur(18px)',
-                border: '1px solid rgba(255,255,255,0.08)'
-              }}
-            >
-              <Title style={{ textAlign: 'center' }} mb='lg' order={3} c='white'>
-                Recenti
-              </Title>
-              {recentExpenses?.length === 0 && (
-                <Text style={{ textAlign: 'center' }} c='dimmed'>
-                  Nessuna spesa recente
-                </Text>
-              )}
-              <Stack gap='sm'>
-                {recentExpenses?.some(e => isToday(e.created_at)) && (
-                  <Text>Oggi</Text>
-                )}
-                {recentExpenses?.filter(e => isToday(e.created_at))?.map((e) => (
-                  <Paper
-                    onClick={() => setShowExpenseDialog(e)}
-                    key={e.id_expense}
-                    radius='xl'
-                    p='md'
-                    bg='rgba(255,255,255,0.04)'
-                  >
-                    <Group mx='xs' justify='space-between'>
-                      <Group>
-                        <Box>
-                          <Text c='white' fw={700}>
-                            {e.category.name}
-                          </Text>
-
-                          <Text size='sm' c='dimmed'>
-                            {new Date(e.created_at).toLocaleString('it-IT', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </Text>
-                        </Box>
-                      </Group>
-
-                      <Text fw={800} size='lg' c='red.4'>
-                        - € {formatCurrency(e.amount)}
-                      </Text>
-                    </Group>
-                  </Paper>
-                ))}
-
-                {recentExpenses?.some(e => !isToday(e.created_at)) && (
-                  <Divider style={{margin: '0 auto'}} size='sm' w='95%' />
-                )}
-                {recentExpenses?.filter(e => !isToday(e.created_at))?.map((e) => (
-                  <Paper
-                    onClick={() => setShowExpenseDialog(e)}
-                    key={e.id_expense}
-                    radius='xl'
-                    p='md'
-                    bg='rgba(255,255,255,0.04)'
-                  >
-                    <Group mx='xs' justify='space-between'>
-                      <Group>
-                        <Box>
-                          <Text c='white' fw={700}>
-                            {e.category.name}
-                          </Text>
-
-                          <Text size='sm' c='dimmed'>
-                            {new Date(e.created_at).toLocaleString('it-IT', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </Text>
-                        </Box>
-                      </Group>
-
-                      <Text fw={800} size='lg' c='red.4'>
-                        - € {formatCurrency(e.amount)}
-                      </Text>
-                    </Group>
-                  </Paper>
-                ))}
-              </Stack>
-            </Card>
           </Stack>
         </Container>
       </Box>
