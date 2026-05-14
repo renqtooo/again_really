@@ -14,8 +14,8 @@ import {
   IconEdit,
   IconSettings,
   IconHeart,
-  IconHeartOff,
-  IconPlus
+  IconPlus,
+  IconHeartFilled
 } from '@tabler/icons-react'
 
 import Loading from '../components/Loading'
@@ -196,7 +196,7 @@ export default function Customize() {
                             style={{padding: '0', width: '2.5rem'}}
                           >
                             {category.is_favourite
-                              ? <IconHeartOff size={25} />
+                              ? <IconHeartFilled size={25} />
                               : <IconHeart size={25} />
                             }
                           </Button>

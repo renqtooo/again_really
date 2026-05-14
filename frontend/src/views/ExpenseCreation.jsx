@@ -486,7 +486,7 @@ export default function ExpenseCreation() {
 
         <FloatingButton
           onClick={createExpense}
-          text='CREA'
+          text='INSERISCI'
           icon={<IconCheck size={25} />}
           loading={isCreateLoading}
           disabled={isBtnDisabled}

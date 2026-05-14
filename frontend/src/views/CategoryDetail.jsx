@@ -16,7 +16,7 @@ import { roundCurrency } from '../composables/currency'
 
 import AlertToast from '../components/AlertToast'
 
-import { IconDeviceFloppy, IconHeart, IconHeartOff, IconPlus, IconTrashX } from '@tabler/icons-react'
+import { IconDeviceFloppy, IconHeart, IconHeartFilled, IconPlus, IconTrashX } from '@tabler/icons-react'
 
 export default function CategoryDetail() {
   const { id: id_category } = useParams()
@@ -276,7 +276,7 @@ export default function CategoryDetail() {
                   left: 0
                 }}
               >
-                {category.is_favourite ? <IconHeartOff size={25} /> : <IconHeart size={25} />}
+                {category.is_favourite ? <IconHeartFilled size={25} /> : <IconHeart size={25} />}
               </Button>
 
               <Button

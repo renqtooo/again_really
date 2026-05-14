@@ -156,6 +156,16 @@ function Home() {
               </Group>
 
               <SimpleGrid cols={2} mt='xl'>
+                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)'>
+                  <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
+                    Oggi
+                  </Text>
+
+                  <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
+                    {'€ ' + formatCurrency(recentExpenses?.reduce((sum, e) => sum + e.amount, 0))}
+                  </Text>
+                </Card>
+                
                 <Card
                   radius='xl'
                   p='md'
@@ -168,16 +178,6 @@ function Home() {
 
                   <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
                     {'€ ' + formatCurrency(expenseTotalStats?.last_month_total)}
-                  </Text>
-                </Card>
-
-                <Card radius='xl' p='md' bg='rgba(255,255,255,0.06)'>
-                  <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
-                    Media giornaliera
-                  </Text>
-
-                  <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
-                    {'€ ' + formatCurrency(expenseTotalStats?.daily_avg_last_month)}
                   </Text>
                 </Card>
               </SimpleGrid>
