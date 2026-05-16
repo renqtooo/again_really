@@ -1,37 +1,11 @@
-import {
-  Box,
-  Button,
-  Card,
-  Container,
-  Group,
-  Stack,
-  Text,
-  ThemeIcon,
-  Title
-} from '@mantine/core'
+import { Box, Card, Container, Stack, Text } from '@mantine/core'
 
-import {
-  IconEdit,
-  IconSettings,
-  IconHeart,
-  IconPlus,
-  IconHeartFilled
-} from '@tabler/icons-react'
+import { IconPlus } from '@tabler/icons-react'
 
 import Header from '../components/Header'
 
 import FloatingButton from '../components/FloatingButton'
 
-import {
-  useCategory,
-  useUpdateCategory
-} from '../hooks/useCategory'
-
-import { iconMap } from '../composables/category'
-
-import { useState } from 'react'
-
-import { formatCurrency } from '../composables/currency'
 import { useNavigate } from 'react-router-dom'
 import CategoryList from '../components/CategoryList'
 
@@ -43,8 +17,7 @@ export default function Customize() {
       <Box
         style={{
           minHeight: '100dvh',
-          background:
-            'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
+          background: 'linear-gradient(180deg, #0f172a 0%, #111827 45%, #020617 100%)',
           position: 'relative',
           overflow: 'hidden'
         }}
@@ -94,14 +67,13 @@ export default function Customize() {
               radius='32px'
               p='xl'
               style={{
-                background:
-                  'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))',
                 border: '1px solid rgba(255,255,255,0.12)',
                 backdropFilter: 'blur(20px)',
                 color: 'white'
               }}
             >
-              <Text style={{textAlign: 'center'}} size='xl' c='gray.4' fw={700}>
+              <Text style={{ textAlign: 'center' }} size='xl' c='gray.4' fw={700}>
                 Configura categorie
               </Text>
             </Card>
@@ -112,8 +84,8 @@ export default function Customize() {
       </Box>
 
       <FloatingButton
-          onClick={() => navigate('/category/0', {state:{from:'customize'}})}
-          icon={<IconPlus size={25} />}
+        onClick={() => navigate('/category/0', { state: { from: 'customize' } })}
+        icon={<IconPlus size={25} />}
       />
     </>
   )

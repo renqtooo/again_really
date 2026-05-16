@@ -1,19 +1,31 @@
-import { Box, Card, Container, Divider, Flex, Group, Loader, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core'
+import {
+  Box,
+  Card,
+  Container,
+  Flex,
+  Group,
+  Loader,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title
+} from '@mantine/core'
 
-import { IconArrowUpRight, IconCalendarDollar, IconCoffee, IconEdit, IconPlus } from '@tabler/icons-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { IconCalendarDollar, IconEdit, IconPlus } from '@tabler/icons-react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
-import { useCreateExpense, useDeleteExpenseById, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
-import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useGetCategoryByName, useUpdateCategory } from '../hooks/useCategory'
-import { useEffect, useRef, useState } from 'react'
+import { useCreateExpense, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
+import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useUpdateCategory } from '../hooks/useCategory'
+import { useRef, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
 import ConfirmDialog from '../components/ConfirmDialog'
 import SlotCounter from 'react-slot-counter'
 import { usePrevious } from '../hooks/usePrevious'
 import CategoryList from '../components/CategoryList'
 import { iconMap } from '../composables/category'
-import Loading from '../components/Loading'
 
 function Home() {
   const navigate = useNavigate()
@@ -21,9 +33,13 @@ function Home() {
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
   const { data: filteredCategories } = useGetCategoriesWithUsualPrice()
   const { mutate: mutateCreateExpense } = useCreateExpense()
-  const { mutate: deleteExpense } = useDeleteExpenseById()
-  const { data: recentExpenses } = useGetExpensesByDate(new Date().toISOString().split('T')[0], new Date().toISOString().split('T')[0], 1, 500)
-  
+  const { data: recentExpenses } = useGetExpensesByDate(
+    new Date().toISOString().split('T')[0],
+    new Date().toISOString().split('T')[0],
+    1,
+    500
+  )
+
   const { data: quickActions } = useGetCategoriesQuickActions()
   const { mutate: updateCategory, isPending: isUpdateLoading } = useUpdateCategory()
   const totalAmount = expenseTotalStats?.total_amount
@@ -31,7 +47,7 @@ function Home() {
   const mountedRef = useRef(false)
 
   const shouldAnimate = mountedRef.current && previousTotal != null && previousTotal !== totalAmount
-  const [showDialog, setShowDialog] = useState({show: false, add: false, del: false})
+  const [showDialog, setShowDialog] = useState({ show: false, add: false, del: false })
 
   const execQuickAction = (qa) => {
     createExpense(qa)
@@ -48,12 +64,12 @@ function Home() {
 
   const addQuickAction = (category) => {
     updateCategory({ ...category, is_quick_action: true })
-    setShowDialog({show: false, add: false, del: false})
+    setShowDialog({ show: false, add: false, del: false })
   }
 
   const delQuickAction = (category) => {
     updateCategory({ ...category, is_quick_action: false })
-    setShowDialog({show: false, add: false, del: false})
+    setShowDialog({ show: false, add: false, del: false })
   }
 
   return (
@@ -101,7 +117,7 @@ function Home() {
           <Stack gap='xl'>
             {/* HERO */}
             <Paper
-              onClick={() => navigate("/expense")}
+              onClick={() => navigate('/expense')}
               radius='32px'
               p='xl'
               style={{
@@ -140,7 +156,7 @@ function Home() {
                       />
                     )}
 
-                    {isExpenseTotalStatsLoading && <Loader style={{alignSelf: 'center'}} color='#3b82f6' />}
+                    {isExpenseTotalStatsLoading && <Loader style={{ alignSelf: 'center' }} color='#3b82f6' />}
                     {!isExpenseTotalStatsLoading && totalAmount == null && '0.00'}
                   </Title>
                 </Box>
@@ -160,7 +176,7 @@ function Home() {
                     {'€ ' + formatCurrency(recentExpenses?.data?.reduce((sum, e) => sum + e.amount, 0))}
                   </Text>
                 </Card>
-                
+
                 <Card
                   radius='xl'
                   p='md'
@@ -181,17 +197,21 @@ function Home() {
             {/* QUICK ACTIONS */}
             <Stack gap='md'>
               <Group
-                onClick={() => {setShowDialog({show: true, add: false, del: true})}}
-                ml='md' mb='lg' gap='0'
+                onClick={() => {
+                  setShowDialog({ show: true, add: false, del: true })
+                }}
+                ml='md'
+                mb='lg'
+                gap='0'
               >
-                {quickActions?.length && <IconEdit /> }
+                {quickActions?.length && <IconEdit />}
                 <Text ml='md' c='white' fw={700} size='lg'>
                   Azioni rapide
                 </Text>
               </Group>
 
-              <SimpleGrid cols={2} spacing="lg">
-                {quickActions?.map(qa => {
+              <SimpleGrid cols={2} spacing='lg'>
+                {quickActions?.map((qa) => {
                   const IconComponent = iconMap[qa?.icon]
 
                   return (
@@ -200,12 +220,8 @@ function Home() {
                         icon={IconComponent ? <IconComponent size={30} /> : null}
                         onComplete={() => execQuickAction(qa)}
                       />
-                      <Flex align="center">
-                        <Text
-                          fw={700}
-                          truncate
-                          style={{ flex: 1, minWidth: 0 }}
-                        >
+                      <Flex align='center'>
+                        <Text fw={700} truncate style={{ flex: 1, minWidth: 0 }}>
                           {qa.name}
                         </Text>
 
@@ -217,14 +233,20 @@ function Home() {
                   )
                 })}
 
-                {quickActions?.length < 4 &&
-                  <Flex mt='lg' onClick={() => setShowDialog({...showDialog, show: true, add: true})} direction='column' align='center' gap='sm'>
+                {quickActions?.length < 4 && (
+                  <Flex
+                    mt='lg'
+                    onClick={() => setShowDialog({ ...showDialog, show: true, add: true })}
+                    direction='column'
+                    align='center'
+                    gap='sm'
+                  >
                     <Text onClick={() => {}}>
                       <IconPlus size={30} />
                     </Text>
                     <Text fw={700}>Aggiungi</Text>
                   </Flex>
-                }
+                )}
               </SimpleGrid>
             </Stack>
           </Stack>
@@ -233,25 +255,31 @@ function Home() {
 
       <ConfirmDialog
         opened={showDialog?.show || isUpdateLoading}
-        onClose={() => setShowDialog({show: false, add: false, del: false})}
+        onClose={() => setShowDialog({ show: false, add: false, del: false })}
         title={showDialog.add ? 'Aggiungi azione rapida' : showDialog.del ? 'Rimuovi azione rapida' : ''}
       >
-        {isUpdateLoading && <Loader style={{alignSelf: 'center'}} color='#3b82f6' />}
-        
-        {showDialog.add && !isUpdateLoading &&
-          <CategoryList
-            filteredCategories={filteredCategories?.filter(c => !quickActions?.map(qa => qa.id_category )?.includes(c.id_category))}
-            onSelect={(category) => {addQuickAction(category)}}
-          />
-        }
+        {isUpdateLoading && <Loader style={{ alignSelf: 'center' }} color='#3b82f6' />}
 
-        {showDialog.del && !isUpdateLoading &&
+        {showDialog.add && !isUpdateLoading && (
+          <CategoryList
+            filteredCategories={filteredCategories?.filter(
+              (c) => !quickActions?.map((qa) => qa.id_category)?.includes(c.id_category)
+            )}
+            onSelect={(category) => {
+              addQuickAction(category)
+            }}
+          />
+        )}
+
+        {showDialog.del && !isUpdateLoading && (
           <CategoryList
             filteredCategories={quickActions}
-            onSelect={(category) => {delQuickAction(category)}}
+            onSelect={(category) => {
+              delQuickAction(category)
+            }}
             delBtn
           />
-        }
+        )}
       </ConfirmDialog>
     </>
   )
