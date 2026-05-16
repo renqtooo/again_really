@@ -60,7 +60,7 @@ export default function AppBar() {
             return (
               <ThemeIcon
                 key={i}
-                size={50}
+                size={35}
                 radius='xl'
                 variant={active ? 'gradient' : 'transparent'}
                 gradient={{ from: 'blue', to: 'cyan' }}
