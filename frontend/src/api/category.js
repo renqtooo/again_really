@@ -41,6 +41,25 @@ export const getFavouriteCategories = async (id_user) => {
   return data
 }
 
+export const getCategoriesWithUsualPrice = async (id_user) => {
+  const { data, error } = await supabase.rpc('get_categories_with_usual_price', {
+    p_profile_id: id_user
+  })
+  
+  if (error) throw error
+  return data
+}
+
+export const getCategoriesQuickActions = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('is_quick_action', true)
+
+    if (error) throw error
+    return data
+}
+
 export const updateCategory = async (payload, id_user) => {
   if (payload.id_category) {
     const { data: existingCategory, error } = await supabase
@@ -59,7 +78,8 @@ export const updateCategory = async (payload, id_user) => {
         usual_price: payload.usual_price,
         icon: payload.icon,
         id_profile: id_user,
-        is_favourite: payload.is_favourite
+        is_favourite: payload.is_favourite,
+        is_quick_action: payload.is_quick_action
       })
       .eq('id_category', payload.id_category)
       .eq('id_profile', id_user)
@@ -77,7 +97,8 @@ export const updateCategory = async (payload, id_user) => {
       usual_price: payload.usual_price,
       icon: payload.icon,
       id_profile: id_user,
-      is_favourite: payload.is_favourite
+      is_favourite: payload.is_favourite,
+      is_quick_action: payload.is_quick_action
     })
     .select()
     .maybeSingle()

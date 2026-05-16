@@ -12,7 +12,7 @@ import { useEffect, useRef } from 'react'
 export default function ConfirmDialog({
   opened,
   onClose,
-  onConfirm,
+  onConfirm=null,
   title = '',
   message = '',
   confirmText = 'Conferma',
@@ -22,7 +22,8 @@ export default function ConfirmDialog({
   input,
   value,
   min,
-  onChange
+  onChange,
+  children
 }) {
   const inputRef = useRef(null)
 
@@ -66,7 +67,9 @@ export default function ConfirmDialog({
         },
 
         body: {
-          paddingTop: 24
+          paddingTop: 24,
+          maxHeight: '50dvh',
+          overflowY: 'auto'
         },
 
         close: {
@@ -80,6 +83,8 @@ export default function ConfirmDialog({
             {message}
           </Text>
         )}
+
+        {children}
 
         {input && (
           <NumberInput
@@ -123,30 +128,32 @@ export default function ConfirmDialog({
             {cancelText}
           </Button>
 
-          <Button
+          {onConfirm &&
+            <Button
             radius='xl'
             size='md'
             variant='gradient'
             gradient={{
               from:
-                color === 'red'
-                  ? 'red'
-                  : color === 'green'
-                    ? 'teal'
-                    : 'blue',
-
+              color === 'red'
+              ? 'red'
+              : color === 'green'
+              ? 'teal'
+              : 'blue',
+              
               to:
-                color === 'red'
-                  ? 'pink'
-                  : color === 'green'
-                    ? 'lime'
-                    : 'cyan'
+              color === 'red'
+              ? 'pink'
+              : color === 'green'
+              ? 'lime'
+              : 'cyan'
             }}
             loading={loading}
             onClick={onConfirm}
-          >
-            {confirmText}
-          </Button>
+            >
+              {confirmText}
+            </Button>
+          }
         </Group>
       </Stack>
     </Modal>

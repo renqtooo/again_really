@@ -227,12 +227,13 @@ export default function ExpenseCreation() {
                 }}
               >
                 <Text size='xl' mb='lg' fw={800} c='white'>
-                  <Button mr='sm' radius='xl' variant='gradient' onClick={() => navigate('/category/0', { state: { from: 'expenseCreation'} })} gradient={{ from: 'blue', to: 'cyan' }} size='xs'>
+                  <Button mr='sm' radius='xl' variant='gradient' onClick={() => navigate('/customize')} gradient={{ from: 'blue', to: 'cyan' }} size='xs'>
                     <IconPlus size={18} />
                   </Button>
                   Categoria
                   <Text span c='red.4'>
                     *
+                  <Text span size='lg' c='dimmed'> (preferiti)</Text>
                   </Text>
                 </Text>
 

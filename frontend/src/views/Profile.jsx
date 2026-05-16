@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   Container,
   Divider,
@@ -154,10 +155,6 @@ export default function Profile() {
                     </Text>
                   </Text>
                 </Box>
-
-                <ThemeIcon onClick={() => setShowConfirmDialog(true)} size={60} radius='xl' variant='light' color='red'>
-                  <IconLogout2 size={30} />
-                </ThemeIcon>
               </Group>
             </Paper>
 
@@ -319,6 +316,17 @@ export default function Profile() {
                 </SimpleGrid>
               )}
             </Card>
+
+            <Button
+              leftSection={<IconLogout2 size={30} />}
+              onClick={() => setShowConfirmDialog(true)}
+              radius='xl'
+              variant='light'
+              color='red'
+              size='lg'
+            >
+              Logout
+            </Button>
           </Stack>
         </Container>
       </Box>

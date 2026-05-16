@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getCategory, updateCategory, getCategoryByName, getFavouriteCategories, getCategoryById, deleteCategory } from '../api/category'
+import { getCategory, updateCategory, getCategoryByName, getFavouriteCategories, getCategoryById, deleteCategory, getCategoriesWithUsualPrice, getCategoriesQuickActions } from '../api/category'
 import { useAuth } from '../auth/AuthProvider'
 
-export const useCategory = () => {
+export const useCategory = (filteredCategories) => {
   const { session } = useAuth()
 
   return useQuery({
     queryKey: ['category_all'],
-    queryFn: () => getCategory(session.user.id)
+    queryFn: () => getCategory(session.user.id),
+    enabled: !filteredCategories
   })
 }
 
@@ -16,6 +17,22 @@ export const useGetCategoryByName = () => {
 
   return useMutation({
     mutationFn: (name) => getCategoryByName(name, session.user.id)
+  })
+}
+
+export const useGetCategoriesWithUsualPrice = () => {
+  const { session } = useAuth()
+
+  return useQuery({
+    queryKey: ['category_usual_price'],
+    queryFn: () => getCategoriesWithUsualPrice(session.user.id)
+  })
+}
+
+export const useGetCategoriesQuickActions = () => {
+  return useQuery({
+    queryKey: ['category_quick_action'],
+    queryFn: getCategoriesQuickActions
   })
 }
 
@@ -51,6 +68,18 @@ export const useUpdateCategory = () => {
       queryClient.invalidateQueries({
         queryKey: ['favourite_categories']
       })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_by_id']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_usual_price']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_quick_action']
+      })
     }
   })
 }
@@ -68,6 +97,18 @@ export const useDeleteCategory = () => {
 
       queryClient.invalidateQueries({
         queryKey: ['favourite_categories']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_by_id']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_usual_price']
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['category_quick_action']
       })
     }
   })

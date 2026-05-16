@@ -1,6 +1,6 @@
 import { Box, Group, Paper, ThemeIcon } from '@mantine/core'
 
-import { IconEdit, IconHome2, IconPlus, IconUser } from '@tabler/icons-react'
+import { IconCalendarDollar, IconEdit, IconHome2, IconPlus, IconUser } from '@tabler/icons-react'
 
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -8,6 +8,10 @@ const tabs = [
   {
     icon: IconHome2,
     path: '/'
+  },
+  {
+    icon: IconCalendarDollar,
+    path: '/expense'
   },
   {
     icon: IconPlus,
@@ -32,8 +36,8 @@ export default function AppBar() {
       style={{
         position: 'fixed',
         bottom: 24,
-        left: 16,
-        right: 16,
+        left: 5,
+        right: 5,
         zIndex: 1000
       }}
     >

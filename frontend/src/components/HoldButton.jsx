@@ -50,8 +50,8 @@ const HoldButton = ({ icon, holdTime = 1200, onComplete }) => {
   return (
     <Box
       pos='relative'
-      w={80}
-      h={80}
+      w={64}
+      h={64}
       onMouseDown={() => setIsHolding(true)}
       onMouseUp={() => setIsHolding(false)}
       onMouseLeave={() => setIsHolding(false)}
@@ -68,8 +68,8 @@ const HoldButton = ({ icon, holdTime = 1200, onComplete }) => {
     >
       {/* Cerchio progresso esterno */}
       <RingProgress
-        size={90}
-        thickness={4}
+        size={72}
+        thickness={3}
         roundCaps
         sections={[{ value: progress, color: progress >= 100 ? 'secondary' : 'tranparent' }]}
         bg='transparent'
@@ -85,7 +85,7 @@ const HoldButton = ({ icon, holdTime = 1200, onComplete }) => {
       {/* Pulsante con espansione dal centro */}
       <ActionIcon
         variant='default'
-        size={72}
+        size={58}
         radius='xl'
         style={{
           zIndex: 1,

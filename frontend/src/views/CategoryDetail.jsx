@@ -74,8 +74,6 @@ export default function CategoryDetail() {
             navigate('/category/' + data.id_category, {
               state: { from: 'categoryCreation' }
             })
-          } else if (from === 'expenseCreation') {
-            navigate(-1)
           } else {
             navigate('/category/' + data.id_category)
           }
