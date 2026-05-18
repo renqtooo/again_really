@@ -23,6 +23,7 @@ import {
   IconLogout2,
   IconReceipt2,
   IconShieldCheckFilled,
+  IconStar,
   IconTrendingDown,
   IconTrendingUp
 } from '@tabler/icons-react'
@@ -35,6 +36,7 @@ import { useExpenseTotalStats } from '../hooks/useExpense'
 import { useEffect, useState } from 'react'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { formatCurrency } from '../composables/currency'
+import { useGetCategoryById } from '../hooks/useCategory'
 
 export default function Profile() {
   const { data: profileData, isLoading: isProfileLoading } = useProfile()
@@ -43,6 +45,7 @@ export default function Profile() {
 
   const { mutate: logout } = useLogout()
   const { mutate: updateMonthlyThreshold } = useUpdateMonthlyThreshold()
+  const { data: favouriteCategory } = useGetCategoryById(expenseTotalStats?.top_category)
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [showThresholdDialog, setShowThresholdDialog] = useState(false)
@@ -192,6 +195,24 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
+                          Totale spese
+                        </Text>
+
+                        <Text fw={900} size='xl' c='white'>
+                          € {formatCurrency(expenseTotalStats?.total_amount)}
+                        </Text>
+                      </Box>
+
+                      <ThemeIcon size={50} radius='xl' variant='light' color='cyan'>
+                        <IconCash size={24} />
+                      </ThemeIcon>
+                    </Group>
+                  </Card>
+                  
+                  <Card radius='xl' p='lg' bg='rgba(255,255,255,0.04)'>
+                    <Group justify='space-between'>
+                      <Box>
+                        <Text size='sm' c='gray.4'>
                           Totale acquisti
                         </Text>
 
@@ -210,16 +231,16 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Totale spese
+                          Categoria preferita
                         </Text>
 
-                        <Text fw={900} size='xl' c='white'>
-                          € {formatCurrency(expenseTotalStats?.total_amount)}
+                        <Text fw={700} size='xl' c='white'>
+                          { favouriteCategory?.name }
                         </Text>
                       </Box>
 
-                      <ThemeIcon size={50} radius='xl' variant='light' color='cyan'>
-                        <IconCash size={24} />
+                      <ThemeIcon size={50} radius='xl' variant='light' color='grape'>
+                        <IconStar size={24} />
                       </ThemeIcon>
                     </Group>
                   </Card>

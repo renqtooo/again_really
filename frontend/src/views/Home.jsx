@@ -19,7 +19,7 @@ import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
 import { useProfile } from '../hooks/useProfile'
 import { useCreateExpense, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
-import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useUpdateCategory } from '../hooks/useCategory'
+import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useGetCategoryById, useUpdateCategory } from '../hooks/useCategory'
 import { useEffect, useRef, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -32,6 +32,7 @@ function Home() {
   const navigate = useNavigate()
 
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
+  const { data: favouriteCategory } = useGetCategoryById(expenseTotalStats?.top_category)
   const { data: profileData, isLoading: isProfileLoading } = useProfile()
   const { data: filteredCategories } = useGetCategoriesWithUsualPrice()
   const { mutate: mutateCreateExpense } = useCreateExpense()
@@ -207,7 +208,10 @@ function Home() {
                 <Card
                   onClick={(e) => {
                     e.stopPropagation()
-                    if (quickActions.length && profileData?.monthly_threshold !== null) setCurrencyVisualization(!currencyVisualization)
+                    if (favouriteCategory?.usual_price
+                        && profileData?.monthly_threshold !== null
+                        && !Number.isNaN(thresholdDifference)
+                      ) setCurrencyVisualization(!currencyVisualization)
                   }}
                   radius='xl'
                   p='md'
@@ -229,7 +233,10 @@ function Home() {
                       : 'white'
                     }
                     >
-                      € {thresholdDifference > 0 ? '+' : ''}{formatCurrency(thresholdDifference)}
+                      {Number.isNaN(thresholdDifference) && '€ 0'}
+                      {!Number.isNaN(thresholdDifference) && (
+                        '€ ' + (thresholdDifference > 0 ? '+' : '') + formatCurrency(thresholdDifference)
+                      )}
                     </Text>
                   )}
 
@@ -238,13 +245,13 @@ function Home() {
                       ta="center"
                       fw={800}
                       size="xl"
-                      c={Math.trunc(thresholdDifference / quickActions?.[0]?.usual_price) > 0 ? 'red' : Math.trunc(thresholdDifference / quickActions?.[0]?.usual_price) === 0 ? 'white' : 'green'}
+                      c={Math.trunc(thresholdDifference / favouriteCategory?.usual_price) > 0 ? 'red' : Math.trunc(thresholdDifference / favouriteCategory?.usual_price) === 0 ? 'white' : 'green'}
                     >
                       ~ {
                       Math.trunc(
-                        formatCurrency(thresholdDifference) / quickActions?.[0]?.usual_price
+                        formatCurrency(thresholdDifference) / favouriteCategory?.usual_price
                       ) || 0
-                      } <Text span size='sm'>{quickActions?.[0]?.name}</Text>
+                      } <Text span size='sm'>{favouriteCategory?.name}</Text>
                     </Text>
                   )}
                 </Card>
