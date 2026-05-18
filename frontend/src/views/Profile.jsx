@@ -27,7 +27,7 @@ import {
   IconTrendingUp
 } from '@tabler/icons-react'
 
-import { useProfile, useUpdateSalary } from '../hooks/useProfile'
+import { useProfile } from '../hooks/useProfile'
 import Loading from '../components/Loading'
 import { useLogout } from '../hooks/useAuth'
 import Header from '../components/Header'
@@ -42,24 +42,24 @@ export default function Profile() {
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
 
   const { mutate: logout } = useLogout()
-  const { mutate: updateSalary } = useUpdateSalary()
+  // const { mutate: updateSalary } = useUpdateSalary()
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [showSalaryDialog, setShowSalaryDialog] = useState(false)
+  // const [showSalaryDialog, setShowSalaryDialog] = useState(false)
 
-  const [salary, setSalary] = useState(null)
-  const [tempSalary, setTempSalary] = useState(0)
+  // const [salary, setSalary] = useState(null)
+  // const [tempSalary, setTempSalary] = useState(0)
 
-  useEffect(() => {
-    if (profileData?.salary != null) {
-      setSalary(profileData.salary)
-    }
-  }, [profileData])
+  // useEffect(() => {
+  //   if (profileData?.salary != null) {
+  //     setSalary(profileData.salary)
+  //   }
+  // }, [profileData])
 
-  const openSalaryDialog = () => {
-    setTempSalary(salary ?? 0)
-    setShowSalaryDialog(true)
-  }
+  // const openSalaryDialog = () => {
+  //   setTempSalary(salary ?? 0)
+  //   setShowSalaryDialog(true)
+  // }
 
   if (isProfileLoading) {
     return <Loading />
@@ -139,7 +139,7 @@ export default function Profile() {
                     {profileData?.username}
                   </Title>
 
-                  <Text
+                  {/* <Text
                     mt='lg'
                     onClick={openSalaryDialog}
                     style={{
@@ -153,7 +153,7 @@ export default function Profile() {
                     <Text span fw={800} c='white'>
                       {salary != null ? `€ ${formatCurrency(salary)}` : '(imposta)'}
                     </Text>
-                  </Text>
+                  </Text> */}
                 </Box>
               </Group>
             </Paper>
@@ -338,7 +338,7 @@ export default function Profile() {
         title='Sei sicuro di voler uscire?'
       />
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         opened={showSalaryDialog}
         onClose={() => {
           setTempSalary(0)
@@ -356,7 +356,7 @@ export default function Profile() {
         value={tempSalary}
         onChange={(val) => setTempSalary(Number(val) >= 0 ? Number(val) : 0)}
         min={0}
-      />
+      /> */}
     </>
   )
 }
