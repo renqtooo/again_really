@@ -10,8 +10,8 @@ export const getProfile = async (session) => {
   return data
 }
 
-export const updateSalary = async (salary, id_profile) => {
-  const { data, error } = await supabase.from('profiles').update({ salary }).eq('id_profile', id_profile).select()
+export const updateMonthlyThreshold = async (threshold, id_profile) => {
+  const { data, error } = await supabase.from('profiles').update({ monthly_threshold: threshold }).eq('id_profile', id_profile).select()
 
   if (error) throw error
   return data

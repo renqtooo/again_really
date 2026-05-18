@@ -17,6 +17,7 @@ import { IconCalendarDollar, IconEdit, IconPlus } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import HoldButton from '../components/HoldButton'
+import { useProfile } from '../hooks/useProfile'
 import { useCreateExpense, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
 import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useUpdateCategory } from '../hooks/useCategory'
 import { useRef, useState } from 'react'
@@ -31,6 +32,7 @@ function Home() {
   const navigate = useNavigate()
 
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
+  const { data: profileData, isLoading: isProfileLoading } = useProfile()
   const { data: filteredCategories } = useGetCategoriesWithUsualPrice()
   const { mutate: mutateCreateExpense } = useCreateExpense()
   const { data: recentExpenses } = useGetExpensesByDate(
@@ -42,11 +44,11 @@ function Home() {
 
   const { data: quickActions } = useGetCategoriesQuickActions()
   const { mutate: updateCategory, isPending: isUpdateLoading } = useUpdateCategory()
-  const totalAmount = expenseTotalStats?.total_amount
-  const previousTotal = usePrevious(totalAmount)
+  const monthAmount = expenseTotalStats?.current_month_total
+  const previousMonthAmount = usePrevious(monthAmount)
   const mountedRef = useRef(false)
 
-  const shouldAnimate = mountedRef.current && previousTotal != null && previousTotal !== totalAmount
+  const shouldAnimate = mountedRef.current && previousMonthAmount != null && previousMonthAmount !== monthAmount
   const [showDialog, setShowDialog] = useState({ show: false, add: false, del: false })
 
   const execQuickAction = (qa) => {
@@ -71,6 +73,10 @@ function Home() {
     updateCategory({ ...category, is_quick_action: false })
     setShowDialog({ show: false, add: false, del: false })
   }
+
+  const thresholdDifference = profileData?.monthly_threshold != null
+    ? expenseTotalStats?.current_month_total - profileData?.monthly_threshold
+    : 0
 
   return (
     <>
@@ -130,12 +136,17 @@ function Home() {
               <Group justify='space-between' align='flex-start'>
                 <Box>
                   <Text c='gray.3' fw={500}>
-                    Spese Totali
+                    Totale di { new Date().toLocaleDateString('it-IT', { month: 'long' }).replace(/^./, c => c.toUpperCase()) }
                   </Text>
 
                   <Title
                     order={1}
                     fw={900}
+                    c={
+                      thresholdDifference > 0
+                        ? 'red'
+                        : 'white'
+                    }
                     style={{
                       fontSize: 52,
                       lineHeight: 1,
@@ -146,9 +157,9 @@ function Home() {
                   >
                     <span>€</span>
 
-                    {!isExpenseTotalStatsLoading && totalAmount != null && (
+                    {!isExpenseTotalStatsLoading && monthAmount != null && (
                       <SlotCounter
-                        value={formatCurrency(totalAmount)}
+                        value={formatCurrency(monthAmount)}
                         separatorCharacters={['.', ',']}
                         autoAnimationStart={shouldAnimate}
                         duration={1.5}
@@ -157,7 +168,7 @@ function Home() {
                     )}
 
                     {isExpenseTotalStatsLoading && <Loader style={{ alignSelf: 'center' }} color='#3b82f6' />}
-                    {!isExpenseTotalStatsLoading && totalAmount == null && '0.00'}
+                    {!isExpenseTotalStatsLoading && monthAmount == null && '0.00'}
                   </Title>
                 </Box>
 
@@ -171,7 +182,7 @@ function Home() {
                   <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
                     Oggi
                   </Text>
-
+                  
                   <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
                     {'€ ' + formatCurrency(recentExpenses?.data?.reduce((sum, e) => sum + e.amount, 0))}
                   </Text>
@@ -184,11 +195,20 @@ function Home() {
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <Text style={{ textAlign: 'center' }} size='sm' c='gray.4'>
-                    Questo mese
+                    Rispetto soglia
                   </Text>
 
-                  <Text style={{ textAlign: 'center' }} fw={800} size='xl' c='white'>
-                    {'€ ' + formatCurrency(expenseTotalStats?.last_month_total)}
+                  <Text
+                    ta="center"
+                    fw={800}
+                    size="xl"
+                    c={
+                      thresholdDifference > 0
+                        ? 'red'
+                        : 'white'
+                    }
+                  >
+                    € {thresholdDifference > 0 ? '+' : ''}{formatCurrency(thresholdDifference)}
                   </Text>
                 </Card>
               </SimpleGrid>

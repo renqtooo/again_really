@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthProvider'
-import { getProfile, updateSalary } from '../api/profile'
+import { getProfile, updateMonthlyThreshold } from '../api/profile'
 
 export const useProfile = () => {
   const { session } = useAuth()
@@ -12,10 +12,17 @@ export const useProfile = () => {
   })
 }
 
-export const useUpdateSalary = () => {
+export const useUpdateMonthlyThreshold = () => {
   const { session } = useAuth()
+  const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (salary) => updateSalary(salary, session.user.id)
+    mutationFn: (threshold) => updateMonthlyThreshold(threshold, session.user.id),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile']
+      })
+    }
   })
 }

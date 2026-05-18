@@ -27,7 +27,7 @@ import {
   IconTrendingUp
 } from '@tabler/icons-react'
 
-import { useProfile } from '../hooks/useProfile'
+import { useProfile, useUpdateMonthlyThreshold } from '../hooks/useProfile'
 import Loading from '../components/Loading'
 import { useLogout } from '../hooks/useAuth'
 import Header from '../components/Header'
@@ -42,24 +42,24 @@ export default function Profile() {
   const { data: expenseTotalStats, isLoading: isExpenseTotalStatsLoading } = useExpenseTotalStats()
 
   const { mutate: logout } = useLogout()
-  // const { mutate: updateSalary } = useUpdateSalary()
+  const { mutate: updateMonthlyThreshold } = useUpdateMonthlyThreshold()
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  // const [showSalaryDialog, setShowSalaryDialog] = useState(false)
+  const [showThresholdDialog, setShowThresholdDialog] = useState(false)
 
-  // const [salary, setSalary] = useState(null)
-  // const [tempSalary, setTempSalary] = useState(0)
+  const [threshold, setThreshold] = useState(null)
+  const [tempThreshold, setTempThreshold] = useState(0)
 
-  // useEffect(() => {
-  //   if (profileData?.salary != null) {
-  //     setSalary(profileData.salary)
-  //   }
-  // }, [profileData])
+  useEffect(() => {
+    if (profileData?.monthly_threshold != null) {
+      setThreshold(profileData.monthly_threshold)
+    }
+  }, [profileData])
 
-  // const openSalaryDialog = () => {
-  //   setTempSalary(salary ?? 0)
-  //   setShowSalaryDialog(true)
-  // }
+  const openThresholdDialog = () => {
+    setTempThreshold(threshold ?? 0)
+    setShowThresholdDialog(true)
+  }
 
   if (isProfileLoading) {
     return <Loading />
@@ -139,21 +139,21 @@ export default function Profile() {
                     {profileData?.username}
                   </Title>
 
-                  {/* <Text
+                  <Text
                     mt='lg'
-                    onClick={openSalaryDialog}
+                    onClick={openThresholdDialog}
                     style={{
                       cursor: 'pointer'
                     }}
                   >
                     <Text span c='gray.4'>
-                      Tot. entrate mensili:{' '}
+                      Soglia spesa mensile:{' '}
                     </Text>
 
                     <Text span fw={800} c='white'>
-                      {salary != null ? `€ ${formatCurrency(salary)}` : '(imposta)'}
+                      {threshold != null ? `€ ${formatCurrency(threshold)}` : '(imposta)'}
                     </Text>
-                  </Text> */}
+                  </Text>
                 </Box>
               </Group>
             </Paper>
@@ -228,11 +228,11 @@ export default function Profile() {
                     <Group justify='space-between'>
                       <Box>
                         <Text size='sm' c='gray.4'>
-                          Media giornaliera
+                          Media giornaliera (questo mese)
                         </Text>
 
                         <Text fw={900} size='xl' c='white'>
-                          € {formatCurrency(expenseTotalStats?.daily_avg_last_month)}
+                          € {formatCurrency(expenseTotalStats?.daily_avg_current_month)}
                         </Text>
                       </Box>
 
@@ -338,25 +338,25 @@ export default function Profile() {
         title='Sei sicuro di voler uscire?'
       />
 
-      {/* <ConfirmDialog
-        opened={showSalaryDialog}
+      <ConfirmDialog
+        opened={showThresholdDialog}
         onClose={() => {
-          setTempSalary(0)
-          setShowSalaryDialog(false)
+          setTempThreshold(0)
+          setShowThresholdDialog(false)
         }}
         onConfirm={() => {
-          setSalary(tempSalary > 0 ? Number(tempSalary) : null)
+          setThreshold(tempThreshold > 0 ? Number(tempThreshold) : null)
 
-          updateSalary(tempSalary > 0 ? Number(tempSalary) : null)
+          updateMonthlyThreshold(tempThreshold > 0 ? Number(tempThreshold) : null)
 
-          setShowSalaryDialog(false)
+          setShowThresholdDialog(false)
         }}
-        title='Totale entrate mensili'
+        title='Soglia spesa mensile'
         input
-        value={tempSalary}
-        onChange={(val) => setTempSalary(Number(val) >= 0 ? Number(val) : 0)}
+        value={tempThreshold}
+        onChange={(val) => setTempThreshold(Number(val) >= 0 ? Number(val) : 0)}
         min={0}
-      /> */}
+      />
     </>
   )
 }
