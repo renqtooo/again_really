@@ -32,8 +32,22 @@ export const getExpensesByDate = async (
 
   if (error) throw error
 
+  const { data: totalData, error: totalError } = await supabase
+    .from('expenses')
+    .select('amount')
+    .gte('created_at', `${startDate}T00:00:00`)
+    .lte('created_at', `${endDate}T23:59:59`)
+
+  if (totalError) throw totalError
+
+  const totalAmount = totalData.reduce(
+    (sum, item) => sum + Number(item.amount),
+    0
+  )
+
   return {
     data,
+    totalAmount,
     pagination: {
       page,
       pageSize,

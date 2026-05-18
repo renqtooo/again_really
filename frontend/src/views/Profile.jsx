@@ -239,7 +239,7 @@ export default function Profile() {
                         </Text>
                       </Box>
 
-                      <ThemeIcon size={50} radius='xl' variant='light' color='grape'>
+                      <ThemeIcon size={50} radius='xl' variant='light' color='yellow'>
                         <IconStar size={24} />
                       </ThemeIcon>
                     </Group>
