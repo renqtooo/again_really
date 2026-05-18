@@ -20,7 +20,7 @@ import HoldButton from '../components/HoldButton'
 import { useProfile } from '../hooks/useProfile'
 import { useCreateExpense, useExpenseTotalStats, useGetExpensesByDate } from '../hooks/useExpense'
 import { useGetCategoriesQuickActions, useGetCategoriesWithUsualPrice, useUpdateCategory } from '../hooks/useCategory'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { formatCurrency } from '../composables/currency'
 import ConfirmDialog from '../components/ConfirmDialog'
 import SlotCounter from 'react-slot-counter'
@@ -51,6 +51,11 @@ function Home() {
   const shouldAnimate = mountedRef.current && previousMonthAmount != null && previousMonthAmount !== monthAmount
   const [showDialog, setShowDialog] = useState({ show: false, add: false, del: false })
 
+  const [currencyVisualization, setCurrencyVisualization] = useState(() => {
+    const saved = localStorage.getItem('currencyVisualization')
+    return saved !== null ? JSON.parse(saved) : true
+  })
+
   const execQuickAction = (qa) => {
     createExpense(qa)
   }
@@ -77,6 +82,17 @@ function Home() {
   const thresholdDifference = profileData?.monthly_threshold != null
     ? expenseTotalStats?.current_month_total - profileData?.monthly_threshold
     : 0
+
+  useEffect(() => {
+    localStorage.setItem(
+      'currencyVisualization',
+      JSON.stringify(currencyVisualization)
+    )
+  }, [currencyVisualization])
+
+  useEffect(() => {
+    if (!quickActions?.length) setCurrencyVisualization(true)
+  }, [quickActions])
 
   return (
     <>
@@ -189,6 +205,10 @@ function Home() {
                 </Card>
 
                 <Card
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (quickActions.length && profileData?.monthly_threshold !== null) setCurrencyVisualization(!currencyVisualization)
+                  }}
                   radius='xl'
                   p='md'
                   bg='rgba(255,255,255,0.06)'
@@ -198,18 +218,35 @@ function Home() {
                     Rispetto soglia
                   </Text>
 
-                  <Text
+                  {currencyVisualization && (
+                    <Text
                     ta="center"
                     fw={800}
                     size="xl"
                     c={
                       thresholdDifference > 0
-                        ? 'red'
-                        : 'white'
+                      ? 'red'
+                      : 'white'
                     }
-                  >
-                    € {thresholdDifference > 0 ? '+' : ''}{formatCurrency(thresholdDifference)}
-                  </Text>
+                    >
+                      € {thresholdDifference > 0 ? '+' : ''}{formatCurrency(thresholdDifference)}
+                    </Text>
+                  )}
+
+                  {!currencyVisualization && (
+                    <Text
+                      ta="center"
+                      fw={800}
+                      size="xl"
+                      c={Math.trunc(thresholdDifference / quickActions?.[0]?.usual_price) > 0 ? 'red' : Math.trunc(thresholdDifference / quickActions?.[0]?.usual_price) === 0 ? 'white' : 'green'}
+                    >
+                      ~ {
+                      Math.trunc(
+                        formatCurrency(thresholdDifference) / quickActions?.[0]?.usual_price
+                      ) || 0
+                      } <Text span size='sm'>{quickActions?.[0]?.name}</Text>
+                    </Text>
+                  )}
                 </Card>
               </SimpleGrid>
             </Paper>
